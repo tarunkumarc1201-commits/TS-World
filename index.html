@@ -355,11 +355,17 @@ async function loadAdminVideos(){
  box.textContent='Loading uploaded videos…';
  const {data,error}=await supabaseClient.from('videos').select('*').order('created_at',{ascending:false}).limit(100);
  if(error){box.textContent='Could not load videos: '+error.message;return;}
- if(!data?.length){box.textContent='No videos found in the videos table yet.';return;}
+ if(!data?.length){box.textContent='No videos uploaded yet.';return;}
  box.innerHTML=data.map(v=>{
    const title=escapeHtml(v.title||v.name||'Untitled video');
-   const url=v.video_url||v.url||v.public_url||'';
-   return '<div class="video-row"><b>'+title+'</b><div>'+escapeHtml(v.description||'')+'</div>'+(url?'<a href="'+escapeHtml(url)+'" target="_blank" rel="noopener">Open video</a>':'<span>Video URL column is empty</span>')+'</div>';
+   let url=v.video_url||v.url||v.public_url||'';
+   if(!url && v.storage_path){url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';}
+   const safeUrl=escapeHtml(url);
+   const date=v.created_at?new Date(v.created_at).toLocaleString():'';
+   return '<article class="video-row" style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,1fr);gap:16px;align-items:start">'+
+     '<div><b style="font-size:16px">'+title+'</b><div style="margin:7px 0;color:#aeb4d0;font-size:13px">'+escapeHtml(v.category||'')+(date?' • '+escapeHtml(date):'')+'</div><p style="margin:6px 0 12px;color:#d4d7e8">'+escapeHtml(v.description||'')+'</p>'+(url?'<a href="'+safeUrl+'" target="_blank" rel="noopener">Open video in new tab</a>':'<span>Video URL is missing for this record.</span>')+'</div>'+
+     (url?'<video controls preload="metadata" playsinline style="width:100%;max-height:260px;background:#000;border-radius:10px"><source src="'+safeUrl+'">Your browser does not support video playback.</video>':'<div class="admin-note">Cannot play: no video URL.</div>')+
+     '</article>';
  }).join('');
 }
 $('adminVideoUploadForm').addEventListener('submit',async e=>{
