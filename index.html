@@ -38,10 +38,11 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
     <h2 id="authTitle">Welcome Back</h2><p class="sub" id="authSub">Login to continue to TS WORLD</p>
     <form id="authForm">
       <label id="nameLabel" class="hidden">Your name</label><input id="nameInput" class="hidden" type="text" placeholder="Enter your name">
-      <label>Email address</label><input id="emailInput" type="email" placeholder="Enter your email" required autocomplete="email">
-      <label>Password</label><input id="passwordInput" type="password" placeholder="Enter password (minimum 6 characters)" required minlength="6" autocomplete="current-password">
+      <label>Email address</label><input id="emailInput" type="email" placeholder="Enter your email" required autocomplete="off">
+      <label>Password</label><input id="passwordInput" type="password" placeholder="Enter password (minimum 6 characters)" required minlength="6" autocomplete="new-password">
       <button class="auth-submit" id="authSubmit" type="submit">Login</button>
     </form>
+    <div style="text-align:right;margin-top:10px" id="forgotWrap"><button id="forgotButton" type="button" style="background:none;border:0;color:#e34cff;cursor:pointer;font-weight:700">Forgot password?</button></div>
     <div class="message" id="authMessage"></div>
     <div class="auth-switch"><span id="switchText">New to TS WORLD?</span> <button id="switchMode" type="button">Create account</button></div>
   </div>
@@ -77,22 +78,43 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 <script>
 const SUPABASE_URL = 'https://pcublhazcdcoggpxslxy.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_QfldbvMQLx9aDiMLt18DWg_CSX5pY5q';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-let isSignup = false;
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+let authMode = 'login';
 
-function setMode(signup){
-  isSignup = signup;
-  document.getElementById('authTitle').textContent = signup ? 'Create Account' : 'Welcome Back';
-  document.getElementById('authSub').textContent = signup ? 'Register to join TS WORLD' : 'Login to continue to TS WORLD';
-  document.getElementById('authSubmit').textContent = signup ? 'Create Account' : 'Login';
-  document.getElementById('nameLabel').classList.toggle('hidden', !signup);
-  document.getElementById('nameInput').classList.toggle('hidden', !signup);
-  document.getElementById('nameInput').required = signup;
-  document.getElementById('switchText').textContent = signup ? 'Already have an account?' : 'New to TS WORLD?';
-  document.getElementById('switchMode').textContent = signup ? 'Login' : 'Create account';
-  document.getElementById('authMessage').textContent = '';
+const $ = id => document.getElementById(id);
+function clearAuthFields(){
+  $('nameInput').value = '';
+  $('emailInput').value = '';
+  $('passwordInput').value = '';
+  $('authMessage').textContent = '';
+  $('authMessage').style.color = '#ffb5b5';
 }
-document.getElementById('switchMode').addEventListener('click',()=>setMode(!isSignup));
+function setMode(mode){
+  authMode = mode;
+  const signup = mode === 'signup';
+  const forgot = mode === 'forgot';
+  const reset = mode === 'reset';
+  $('authTitle').textContent = signup ? 'Create Account' : forgot ? 'Reset Password' : reset ? 'Choose New Password' : 'Welcome Back';
+  $('authSub').textContent = signup ? 'Register to join TS WORLD' : forgot ? 'Enter your registered email address' : reset ? 'Enter your new password' : 'Login to continue to TS WORLD';
+  $('authSubmit').textContent = signup ? 'Create Account' : forgot ? 'Send Reset Link' : reset ? 'Update Password' : 'Login';
+  $('nameLabel').classList.toggle('hidden', !signup);
+  $('nameInput').classList.toggle('hidden', !signup);
+  $('nameInput').required = signup;
+  $('emailInput').classList.toggle('hidden', reset);
+  $('emailInput').required = !reset;
+  $('passwordInput').classList.toggle('hidden', forgot);
+  $('passwordInput').required = !forgot;
+  $('passwordInput').placeholder = reset ? 'Enter new password (minimum 6 characters)' : 'Enter password (minimum 6 characters)';
+  $('forgotWrap').classList.toggle('hidden', signup || forgot || reset);
+  $('switchText').textContent = signup ? 'Already have an account?' : forgot ? 'Remember your password?' : reset ? '' : 'New to TS WORLD?';
+  $('switchMode').textContent = signup || forgot ? 'Login' : reset ? '' : 'Create account';
+  $('switchMode').classList.toggle('hidden', reset);
+  clearAuthFields();
+}
+$('switchMode').addEventListener('click',()=>setMode('login'===authMode?'signup':'login'));
+$('forgotButton').addEventListener('click',()=>setMode('forgot'));
 
 async function showApp(user){
   let role = 'user';
@@ -101,29 +123,46 @@ async function showApp(user){
   else if(!error){
     await supabaseClient.from('profiles').insert({user_id:user.id,email:user.email,role:'user'});
   }
-  document.getElementById('authScreen').classList.add('hidden');
-  document.getElementById('appScreen').classList.remove('hidden');
-  document.getElementById('userLabel').textContent = (user.email || 'User') + (role === 'admin' ? ' • ADMIN' : '');
+  $('authScreen').classList.add('hidden');
+  $('appScreen').classList.remove('hidden');
+  $('userLabel').textContent = (user.email || 'User') + (role === 'admin' ? ' • ADMIN' : '');
   document.body.dataset.role = role;
 }
 async function logout(){
-  await supabaseClient.auth.signOut();
-  document.getElementById('appScreen').classList.add('hidden');
-  document.getElementById('authScreen').classList.remove('hidden');
-  setMode(false);
+  const {error}=await supabaseClient.auth.signOut({scope:'local'});
+  if(error){ alert('Logout failed: '+error.message); return; }
+  $('appScreen').classList.add('hidden');
+  $('authScreen').classList.remove('hidden');
+  setMode('login');
+  // Clear fields so the previous account/password is not left in the form.
+  clearAuthFields();
 }
-document.getElementById('authForm').addEventListener('submit',async(e)=>{
+$('authForm').addEventListener('submit',async(e)=>{
   e.preventDefault();
-  const msg=document.getElementById('authMessage');
-  const email=document.getElementById('emailInput').value.trim();
-  const password=document.getElementById('passwordInput').value;
-  const submit=document.getElementById('authSubmit');
+  const msg=$('authMessage');
+  const email=$('emailInput').value.trim();
+  const password=$('passwordInput').value;
+  const submit=$('authSubmit');
   submit.disabled=true; submit.textContent='Please wait...'; msg.textContent='';
   try{
-    if(isSignup){
-      const name=document.getElementById('nameInput').value.trim();
+    if(authMode==='forgot'){
+      const redirectTo=window.location.origin+window.location.pathname;
+      const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo});
+      if(error) throw error;
+      msg.style.color='#ffd27a';
+      msg.textContent='Password reset link sent. Check your email inbox.';
+    }else if(authMode==='reset'){
+      const {error}=await supabaseClient.auth.updateUser({password});
+      if(error) throw error;
+      msg.style.color='#9cf0b0';
+      msg.textContent='Password updated successfully. Please login with your new password.';
+      await supabaseClient.auth.signOut({scope:'local'});
+      setMode('login');
+    }else if(authMode==='signup'){
+      const name=$('nameInput').value.trim();
       const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{full_name:name}}});
       if(error) throw error;
+      $('passwordInput').value='';
       if(data.session){
         await showApp(data.user);
       }else{
@@ -133,24 +172,35 @@ document.getElementById('authForm').addEventListener('submit',async(e)=>{
     }else{
       const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
       if(error) throw error;
+      $('passwordInput').value='';
       await showApp(data.user);
     }
   }catch(err){
     msg.style.color='#ffb5b5';
     msg.textContent=err.message || 'Something went wrong. Please try again.';
   }finally{
-    submit.disabled=false; submit.textContent=isSignup?'Create Account':'Login';
+    submit.disabled=false;
+    submit.textContent=authMode==='signup'?'Create Account':authMode==='forgot'?'Send Reset Link':authMode==='reset'?'Update Password':'Login';
   }
 });
 async function initAuth(){
   const {data:{session}}=await supabaseClient.auth.getSession();
   if(session?.user) await showApp(session.user);
-  else document.getElementById('authScreen').classList.remove('hidden');
+  else {
+    $('appScreen').classList.add('hidden');
+    $('authScreen').classList.remove('hidden');
+    setMode('login');
+  }
 }
-supabaseClient.auth.onAuthStateChange((_event,session)=>{
-  if(!session){
-    document.getElementById('appScreen').classList.add('hidden');
-    document.getElementById('authScreen').classList.remove('hidden');
+supabaseClient.auth.onAuthStateChange((event,session)=>{
+  if(event==='PASSWORD_RECOVERY'){
+    setMode('reset');
+    $('authScreen').classList.remove('hidden');
+    $('appScreen').classList.add('hidden');
+  }else if(event==='SIGNED_OUT'){
+    $('appScreen').classList.add('hidden');
+    $('authScreen').classList.remove('hidden');
+    setMode('login');
   }
 });
 function filterCategory(category,button){
@@ -158,10 +208,10 @@ function filterCategory(category,button){
  document.querySelectorAll('.video').forEach(card=>card.style.display=(category==='All'||card.dataset.category===category)?'block':'none');
 }
 function searchVideos(){
- const q=document.getElementById('searchInput').value.toLowerCase().trim();
+ const q=$('searchInput').value.toLowerCase().trim();
  document.querySelectorAll('.video').forEach(card=>card.style.display=card.innerText.toLowerCase().includes(q)?'block':'none');
 }
-document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchVideos()});
+$('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchVideos()});
 initAuth();
 </script>
 </body>
