@@ -1,325 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TS WORLD — Watch • Upload • Earn</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TS WORLD | Admin Control Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#070812;--panel:#101326;--panel2:#151a31;--line:#282d49;--text:#f7f7ff;--muted:#a6abc5;--purple:#a100ff;--blue:#176bff;--pink:#ff35d3;--gold:#ffca35}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 70% 0%,#17103a 0,transparent 32%),var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
-button,input{font:inherit}.hidden{display:none!important}
-.topbar{height:76px;display:flex;align-items:center;gap:24px;padding:0 28px;border-bottom:1px solid var(--line);background:#080914ed;position:sticky;top:0;z-index:5}
-.brand{display:flex;align-items:center;gap:11px;min-width:260px;font-size:27px;font-weight:900;letter-spacing:-1px}.brand .play{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#ffbd32,#ff28b9 48%,#397dff);display:grid;place-items:center;box-shadow:0 0 22px #a100ff88;font-size:23px}.brand b{background:linear-gradient(90deg,#fff,#ffd02e 60%,#ff8c2b);color:transparent;background-clip:text}.brand small{display:block;font-size:10px;color:#c4c7dc;letter-spacing:2px;margin-top:1px}
-.search{flex:1;display:flex;max-width:700px;background:#111529;border:1px solid #343a5c;border-radius:30px;overflow:hidden}.search input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;padding:14px 20px;font-size:14px}.search button{border:0;color:white;background:linear-gradient(110deg,#7b00ff,#e000c8);padding:0 24px;font-size:20px;cursor:pointer}
-.top-actions{display:flex;align-items:center;gap:14px}.upload,.login{border:1px solid #414768;background:#11162c;color:white;border-radius:24px;padding:11px 17px;cursor:pointer;font-weight:700}.login{background:linear-gradient(100deg,#7900ed,#c000b9);border:0}
-.layout{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:calc(100vh - 76px)}aside{padding:22px 14px;border-right:1px solid var(--line);background:#090b17}.nav a{display:flex;align-items:center;gap:14px;padding:13px 15px;border-radius:13px;color:#e8e9f4;text-decoration:none;margin:4px 0;font-weight:650;font-size:14px}.nav a span{font-size:19px;width:23px;text-align:center}.nav a.active,.nav a:hover{background:linear-gradient(100deg,#7800df,#35106f);box-shadow:0 5px 20px #9c00ff40}.nav hr{border:0;border-top:1px solid #30344d;margin:16px 8px}
-.earnbox{margin:26px 4px 0;padding:20px 15px;text-align:center;border:1px solid #9c4bff;border-radius:20px;background:linear-gradient(145deg,#211044,#0b1741);box-shadow:0 0 22px #702cff55}.earnbox .coin{font-size:34px}.earnbox h3{margin:8px 0}.earnbox p{font-size:12px;color:#c6c9df;line-height:1.5}.earnbox button{background:linear-gradient(90deg,#8b00ff,#e000c8);border:0;border-radius:24px;color:white;padding:11px 18px;font-weight:800;cursor:pointer}
-main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336bb;border-radius:22px;overflow:hidden;position:relative;padding:35px 42px;background:radial-gradient(circle at 80% 50%,#143ca9 0,transparent 30%),radial-gradient(circle at 60% 20%,#7800a8 0,transparent 40%),linear-gradient(110deg,#16052f,#080d2b 65%,#1b0640);box-shadow:0 12px 35px #5000a833}.hero:after{content:"▶";position:absolute;right:9%;top:23px;font-size:180px;color:#ffffff0c;transform:rotate(-8deg)}.hero h1{font-size:clamp(32px,4vw,56px);margin:4px 0 5px;letter-spacing:-2px}.hero h1 strong{color:#ffc52d}.hero .tag{font-size:21px;font-weight:800}.hero p{color:#d1d4e8;max-width:470px;line-height:1.5}.hero-buttons{display:flex;gap:12px;margin-top:20px}.primary,.secondary{padding:13px 21px;border-radius:25px;font-weight:800;cursor:pointer}.primary{border:0;color:white;background:linear-gradient(90deg,#8500ff,#e000d2);box-shadow:0 0 18px #c000ff66}.secondary{border:1px solid #ddd;color:white;background:#080b20}
-.categories{display:flex;gap:10px;overflow:auto;padding:18px 2px 22px}.chip{white-space:nowrap;border:1px solid #424965;border-radius:24px;padding:10px 17px;background:#111529;color:#f3f3fb;cursor:pointer;font-weight:650}.chip.active{background:linear-gradient(90deg,#8300ee,#c000c8);border-color:transparent}
-.section-title{display:flex;align-items:center;justify-content:space-between;margin:2px 2px 15px}.section-title h2{font-size:22px;margin:0}.section-title a{color:#df36ff;text-decoration:none;font-weight:750}
-.videos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 16px}.video{min-width:0;cursor:pointer}.thumb{height:auto;aspect-ratio:16/9;border-radius:14px;border:1px solid #41496c;overflow:hidden;position:relative;display:grid;place-items:center;text-align:center;padding:15px;background:linear-gradient(135deg,#174a83,#7d3cb1 55%,#ec8b3e);font-weight:900;font-size:clamp(17px,2vw,25px);text-shadow:0 2px 8px #000}.thumb small{display:block;font-size:12px;letter-spacing:2px}.thumb .duration{position:absolute;right:9px;bottom:8px;background:#05050bdc;padding:4px 7px;border-radius:6px;font-size:12px}.t2{background:linear-gradient(135deg,#063d3d,#087d7a,#102d4c)}.t3{background:linear-gradient(135deg,#08132e,#2457d4,#8c16bb)}.t4{background:linear-gradient(135deg,#07315b,#1592c9,#101b37)}.t5{background:linear-gradient(135deg,#4b0a45,#ec347e,#241144)}.t6{background:linear-gradient(135deg,#8b6a27,#e7bb4b,#392b18)}.t7{background:linear-gradient(135deg,#193f31,#f0a34b,#643c22)}.t8{background:linear-gradient(135deg,#401326,#a62d36,#11182d)}
-.video h3{font-size:14px;line-height:1.35;margin:9px 2px 5px}.meta{font-size:12px;color:var(--muted);margin:0 2px}.channel{color:#e8e9f5;font-weight:700}footer{text-align:center;color:#858ba8;padding:35px 10px;font-size:12px}
-.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at 70% 0%,#17103a 0,transparent 32%),#070812}
-.auth-card{width:min(440px,100%);padding:30px;border:1px solid #7336bb;border-radius:22px;background:linear-gradient(145deg,#15102b,#101326);box-shadow:0 15px 55px #6000a044}
-.auth-brand{display:flex;justify-content:center;margin-bottom:22px}.auth-card h2{text-align:center;margin:0 0 8px;font-size:28px}.auth-card .sub{text-align:center;color:var(--muted);font-size:13px;margin:0 0 24px}
-.auth-card label{display:block;font-size:13px;color:#d7d8e8;margin:13px 0 7px}.auth-card input{width:100%;padding:13px 14px;border:1px solid #414768;border-radius:10px;background:#090d1d;color:white;outline:none}.auth-card input:focus{border-color:#b34cff}
-.auth-submit{width:100%;padding:13px;border:0;border-radius:25px;margin-top:20px;color:white;font-weight:800;background:linear-gradient(90deg,#8500ff,#e000d2);cursor:pointer}
-.auth-switch{text-align:center;color:#bfc2d8;font-size:13px;margin-top:18px}.auth-switch button{background:none;border:0;color:#e34cff;font-weight:800;cursor:pointer}.message{min-height:20px;margin-top:12px;text-align:center;font-size:13px;color:#ffb5b5}.user-pill{font-size:12px;color:#d8d9e9;border:1px solid #414768;border-radius:20px;padding:10px 13px}
- 
-.admin-shell{min-height:100vh;background:radial-gradient(circle at 80% 0%,#20104b 0,transparent 35%),#070812;color:#f7f7ff}
-.admin-top{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #282d49;background:#080914}
-.admin-title{font-size:24px;font-weight:900}.admin-title span{color:#ffc52d}
-.admin-layout{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:calc(100vh - 76px)}
-.admin-side{padding:22px 14px;border-right:1px solid #282d49;background:#090b17}
-.admin-side button{display:block;width:100%;text-align:left;padding:13px 15px;margin:5px 0;border:0;border-radius:12px;background:transparent;color:#e8e9f4;font-weight:700;cursor:pointer}
-.admin-side button.active,.admin-side button:hover{background:linear-gradient(100deg,#7800df,#35106f)}
-.admin-main{padding:28px;min-width:0}
-.admin-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}
-.admin-heading h1{margin:0;font-size:28px}.admin-heading p{color:#a6abc5;margin:6px 0 0}
-.admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:20px 0}
-.admin-card{background:#101326;border:1px solid #282d49;border-radius:16px;padding:20px}
-.admin-card small{color:#a6abc5}.admin-card strong{display:block;font-size:28px;margin-top:9px}
-.admin-panel{background:#101326;border:1px solid #282d49;border-radius:16px;padding:20px;margin-top:18px}
-.admin-panel h2{font-size:18px;margin:0 0 14px}
-.admin-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.admin-action{padding:18px;border:1px solid #414768;border-radius:14px;background:#151a31;color:#fff;text-align:left;cursor:pointer}
-.admin-action b{display:block;margin-bottom:7px}.admin-action span{color:#a6abc5;font-size:12px}
-.admin-table{width:100%;border-collapse:collapse;font-size:13px}.admin-table th,.admin-table td{padding:11px;border-bottom:1px solid #282d49;text-align:left;overflow-wrap:anywhere}
-.admin-table th{color:#a6abc5}
-.admin-note{color:#ffd27a;font-size:13px;line-height:1.5}
-.admin-logout{border:1px solid #414768;background:#11162c;color:#fff;border-radius:22px;padding:10px 17px;cursor:pointer}
-@media(max-width:850px){.admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-layout{grid-template-columns:1fr}.admin-side{display:flex;overflow:auto;gap:5px;padding:8px}.admin-side button{white-space:nowrap;width:auto}.admin-main{padding:16px}}
-@media(max-width:480px){.admin-grid,.admin-actions{grid-template-columns:1fr}.admin-top{padding:0 14px}.admin-title{font-size:19px}}
-\n@media(max-width:1100px){.videos{grid-template-columns:repeat(3,minmax(0,1fr))}.brand{min-width:190px}.topbar{gap:14px;padding:0 16px}}
-@media(max-width:760px){.topbar{height:auto;min-height:66px;flex-wrap:wrap;padding:12px}.brand{min-width:0;flex:1;font-size:22px}.brand .play{width:36px;height:36px}.search{order:3;flex-basis:100%;max-width:none}.top-actions .upload{display:none}.layout{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line);padding:8px 10px}.nav{display:flex;overflow:auto;gap:4px}.nav a{white-space:nowrap;padding:10px 12px}.nav hr,.earnbox{display:none}main{padding:14px}.hero{padding:25px 22px;min-height:230px}.hero:after{right:2%;font-size:110px}.hero p{max-width:80%}.videos{grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 11px}}
-@media(max-width:430px){.videos{grid-template-columns:1fr}.hero h1{font-size:34px}.hero .tag{font-size:17px}.hero p{max-width:100%}.hero:after{opacity:.4}}
-</style>
-</head>
-<body>
-<section id="authScreen" class="auth-wrap">
-  <div class="auth-card">
-    <div class="auth-brand"><div class="brand"><div class="play">▶</div><div>TS <b>WORLD</b><small>WATCH • UPLOAD • EARN</small></div></div></div>
-    <h2 id="authTitle">Welcome Back</h2><p class="sub" id="authSub">Login to continue to TS WORLD</p>
-    <form id="authForm">
-      <label id="nameLabel" class="hidden">Your name</label><input id="nameInput" class="hidden" type="text" placeholder="Enter your name">
-      <label>Email address</label><input id="emailInput" type="email" placeholder="Enter your email" required autocomplete="off">
-      <label>Password</label><input id="passwordInput" type="password" placeholder="Enter password (minimum 6 characters)" required minlength="6" autocomplete="new-password">
-      <button class="auth-submit" id="authSubmit" type="submit">Login</button>
-    </form>
-    <div style="text-align:right;margin-top:10px" id="forgotWrap"><button id="forgotButton" type="button" style="background:none;border:0;color:#e34cff;cursor:pointer;font-weight:700">Forgot password?</button></div>
-    <div class="message" id="authMessage"></div>
-    <div class="auth-switch"><span id="switchText">New to TS WORLD?</span> <button id="switchMode" type="button">Create account</button></div>
-  </div>
-</section>
-
-<div id="adminScreen" class="admin-shell hidden">
-<header class="admin-top"><div class="admin-title">TS <span>WORLD</span> <small style="font-size:11px;color:#a6abc5;letter-spacing:1px">ADMIN CONTROL PANEL</small></div><div><span id="adminEmail" style="font-size:12px;color:#c7c9dc;margin-right:12px"></span><button class="admin-logout" onclick="logout()">Logout</button></div></header>
-<div class="admin-layout">
-<aside class="admin-side">
-<button class="active" data-admin-tab="overview" onclick="openAdminTab('overview',this)">▦ Overview</button>
-<button data-admin-tab="videos" onclick="openAdminTab('videos',this)">▶ Video Management</button>
-<button data-admin-tab="users" onclick="openAdminTab('users',this)">♙ Users</button>
-<button data-admin-tab="rewards" onclick="openAdminTab('rewards',this)">🪙 Reward Rules</button>
-<button data-admin-tab="withdrawals" onclick="openAdminTab('withdrawals',this)">₹ Withdrawals</button>
-<button data-admin-tab="settings" onclick="openAdminTab('settings',this)">⚙ Settings</button>
-</aside>
-<main class="admin-main">
-<section id="adminOverview" class="admin-tab">
-<div class="admin-heading"><div><h1>Admin Dashboard</h1><p>Full administrative view of TS WORLD</p></div></div>
-<div class="admin-grid">
-<div class="admin-card"><small>Total registered users</small><strong id="adminUserCount">—</strong></div>
-<div class="admin-card"><small>Reward rules</small><strong id="adminRuleCount">—</strong></div>
-<div class="admin-card"><small>Videos</small><strong id="adminVideoCount">—</strong></div>
-<div class="admin-card"><small>Withdrawal requests</small><strong id="adminWithdrawalCount">—</strong></div>
-</div>
-<div class="admin-panel"><h2>Admin Controls</h2><div class="admin-actions">
-<button class="admin-action" onclick="openAdminTab('videos')"><b>▶ Manage Videos</b><span>Review and manage platform videos</span></button>
-<button class="admin-action" onclick="openAdminTab('users')"><b>♙ Manage Users</b><span>View registered accounts and roles</span></button>
-<button class="admin-action" onclick="openAdminTab('rewards')"><b>🪙 Set Coin Rewards</b><span>Control rewards for video duration</span></button>
-<button class="admin-action" onclick="openAdminTab('withdrawals')"><b>₹ Withdrawal Requests</b><span>Review payment requests and status</span></button>
-<button class="admin-action" onclick="openAdminTab('settings')"><b>⚙ Platform Settings</b><span>Admin-only platform configuration</span></button>
-</div></div>
-</section>
-<section id="adminVideos" class="admin-tab hidden"><div class="admin-heading"><div><h1>Video Management</h1><p>Admin video controls</p></div></div><div class="admin-panel"><p class="admin-note" id="videoAdminMessage">Video data table is not connected yet. The admin screen is separate from the user dashboard.</p></div></section>
-<section id="adminUsers" class="admin-tab hidden"><div class="admin-heading"><div><h1>User Management</h1><p>Registered TS WORLD accounts</p></div></div><div class="admin-panel"><table class="admin-table"><thead><tr><th>Email</th><th>Role</th><th>User ID</th></tr></thead><tbody id="adminUsersBody"><tr><td colspan="3">Loading users…</td></tr></tbody></table></div></section>
-<section id="adminRewards" class="admin-tab hidden"><div class="admin-heading"><div><h1>Reward Rules</h1><p>Coin rewards configuration</p></div></div><div class="admin-panel"><p class="admin-note">Reward rules table exists in your Supabase project. Its exact column structure must be checked before safely enabling add/edit controls.</p><div id="adminRulesData">Loading reward rules…</div></div></section>
-<section id="adminWithdrawals" class="admin-tab hidden"><div class="admin-heading"><div><h1>Withdrawal Requests</h1><p>Review user payout requests</p></div></div><div class="admin-panel"><p class="admin-note">Withdrawal request storage and payment status table are not connected yet.</p></div></section>
-<section id="adminSettings" class="admin-tab hidden"><div class="admin-heading"><div><h1>Platform Settings</h1><p>Admin-only settings</p></div></div><div class="admin-panel"><p>Signed in as administrator: <b id="adminSettingsEmail"></b></p><p class="admin-note">Only the account whose role is <b>admin</b> in public.profiles should see this dashboard.</p></div></section>
-</main></div></div>
-
-<div id="appScreen" class="hidden">
-<header class="topbar">
-  <div class="brand"><div class="play">▶</div><div>TS <b>WORLD</b><small>WATCH • UPLOAD • EARN</small></div></div>
-  <div class="search"><input id="searchInput" placeholder="Search videos, channels, or topics..."><button onclick="searchVideos()">⌕</button></div>
-  <div class="top-actions"><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
-</header>
-<div class="layout">
-<aside><nav class="nav">
-<a class="active" href="#"><span>⌂</span>Home</a><a href="#"><span>🔥</span>Trending</a><a href="#"><span>▶</span>Shorts</a><a href="#"><span>▣</span>Subscriptions</a><hr>
-<a href="#"><span>♙</span>My Channel</a><a href="#"><span>☁</span>Upload Video</a><a href="#"><span>▱</span>My Wallet</a><a href="#"><span>₹</span>Withdraw</a><a href="#"><span>◷</span>History</a><a href="#"><span>♡</span>Watch Later</a>
-</nav><div class="earnbox"><div class="coin">🪙</div><h3>Watch & Earn Coins</h3><p>Watch videos, collect coins and request your rewards.</p><button onclick="alert('Wallet and rewards will be activated in the next step.')">Start Earning ›</button></div></aside>
-<main>
-<section class="hero"><h1>TS <strong>WORLD</strong></h1><div class="tag">▶ Watch&nbsp; • &nbsp;Upload&nbsp; • &nbsp;Earn</div><p>A video platform for creators and viewers. Discover videos, share your content and earn rewards.</p><div class="hero-buttons"><button class="primary" onclick="document.querySelector('.videos').scrollIntoView({behavior:'smooth'})">▶ Watch Videos</button><button class="secondary" onclick="alert('Video upload will be connected in the next step.')">＋ Upload Video</button></div></section>
-<div class="categories"><button class="chip active" onclick="filterCategory('All',this)">▦ All</button><button class="chip" onclick="filterCategory('Education',this)">🎓 Education</button><button class="chip" onclick="filterCategory('Entertainment',this)">🎬 Entertainment</button><button class="chip" onclick="filterCategory('Technology',this)">💻 Technology</button><button class="chip" onclick="filterCategory('Music',this)">♫ Music</button><button class="chip" onclick="filterCategory('Sports',this)">🏆 Sports</button><button class="chip" onclick="filterCategory('Travel',this)">✈ Travel</button></div>
-<div class="section-title"><h2>▶ Recommended for You</h2><a href="#">View All ›</a></div>
-<section class="videos" id="videoGrid">
-<article class="video" data-category="Travel"><div class="thumb">🏔️<br>BEAUTIFUL NATURE<small>4K • RELAXING SCENERY</small><span class="duration">10:24</span></div><h3>Beautiful Nature – 4K Video | Relaxing Scenery</h3><p class="meta"><span class="channel">Nature World</span><br>2.4K views • 3 days ago</p></article>
-<article class="video" data-category="Education"><div class="thumb t2">CLASS 9 MATHS<br><small>QUADRATIC EQUATIONS</small><span class="duration">12:18</span></div><h3>Class 9 Maths – Quadratic Equations | Easy Explanation</h3><p class="meta"><span class="channel">TS Education</span><br>5.8K views • 5 days ago</p></article>
-<article class="video" data-category="Technology"><div class="thumb t3">TOP 10<br>TECH TIPS<small>IN 2026</small><span class="duration">8:45</span></div><h3>Top 10 Useful Tech Tips for Everyone in 2026</h3><p class="meta"><span class="channel">Tech World</span><br>9.1K views • 6 days ago</p></article>
-<article class="video" data-category="Sports"><div class="thumb t4">🏏<br>CRICKET HIGHLIGHTS<small>BEST MOMENTS</small><span class="duration">6:32</span></div><h3>Cricket Highlights – Best Moments</h3><p class="meta"><span class="channel">Sports Hub</span><br>14K views • 1 week ago</p></article>
-<article class="video" data-category="Music"><div class="thumb t5">♫ MUSIC<br>LIVE PERFORMANCE<small>BEST SONGS</small><span class="duration">15:00</span></div><h3>Live Music Performance – Best Songs</h3><p class="meta"><span class="channel">Music Beats</span><br>3.2K views • 2 days ago</p></article>
-<article class="video" data-category="Travel"><div class="thumb t6">HYDERABAD<br>TRAVEL VLOG<small>EXPLORE THE CITY</small><span class="duration">11:20</span></div><h3>Hyderabad Travel Vlog – Explore the City</h3><p class="meta"><span class="channel">Travel Diaries</span><br>7.2K views • 4 days ago</p></article>
-<article class="video" data-category="Entertainment"><div class="thumb t7">DAILY<br>MOTIVATION<small>NEVER GIVE UP</small><span class="duration">7:10</span></div><h3>Daily Motivation – Start Your Day Strong</h3><p class="meta"><span class="channel">Inspire You</span><br>1.8K views • 1 day ago</p></article>
-<article class="video" data-category="Entertainment"><div class="thumb t8">MOVIE<br>REVIEW<small>THIS WEEK</small><span class="duration">9:28</span></div><h3>Latest Movie Review – What You Should Know</h3><p class="meta"><span class="channel">Cinema Talk</span><br>4.5K views • 2 days ago</p></article>
-</section><footer>© 2026 TS WORLD • Watch • Upload • Earn</footer>
-</main></div></div>
-
+:root{--bg:#070812;--panel:#101326;--panel2:#151a31;--line:#282d49;--text:#f7f7ff;--muted:#a6abc5;--purple:#a100ff;--pink:#df00c8;--gold:#ffca35;--green:#32d296;--red:#ff667d}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 75% 0%,#211044 0,transparent 32%),var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}button,input,select{font:inherit}.hidden{display:none!important}button{cursor:pointer}.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:22px}.auth-card{width:min(430px,100%);padding:32px;border:1px solid #7336bb;border-radius:22px;background:linear-gradient(145deg,#15102b,#101326);box-shadow:0 15px 55px #6000a044}.brand{display:flex;align-items:center;gap:11px;font-size:27px;font-weight:900;letter-spacing:-1px}.play{width:43px;height:43px;border-radius:14px;background:linear-gradient(135deg,#ffbd32,#ff28b9 48%,#397dff);display:grid;place-items:center;box-shadow:0 0 22px #a100ff88}.brand b,.admin-title span{background:linear-gradient(90deg,#fff,#ffd02e 60%,#ff8c2b);color:transparent;background-clip:text}.brand small{display:block;font-size:10px;color:#c4c7dc;letter-spacing:2px}.auth-brand{display:flex;justify-content:center;margin-bottom:25px}.auth-card h1{text-align:center;font-size:27px;margin:0 0 8px}.muted{text-align:center;color:var(--muted);font-size:13px;margin:0 0 22px}.auth-card label{display:block;font-size:13px;margin:13px 0 7px;color:#d7d8e8}.auth-card input{width:100%;padding:13px 14px;border:1px solid #414768;border-radius:10px;background:#090d1d;color:white;outline:none}.auth-card input:focus{border-color:#b34cff}.primary{width:100%;padding:13px;border:0;border-radius:25px;margin-top:20px;color:white;font-weight:800;background:linear-gradient(90deg,#8500ff,#e000d2)}.linkbtn{border:0;background:none;color:#e34cff;font-weight:700}.message{min-height:20px;margin-top:12px;text-align:center;font-size:13px;color:#ffb5b5}.auth-foot{text-align:center;color:var(--muted);font-size:11px;margin-top:18px}
+#adminApp{min-height:100vh}.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;border-bottom:1px solid var(--line);background:#080914ed;position:sticky;top:0;z-index:5}.admin-title{font-size:24px;font-weight:900}.admin-title small{font-size:10px;color:var(--muted);letter-spacing:1.5px;display:block;margin-top:2px}.top-right{display:flex;align-items:center;gap:12px}.email-pill{font-size:12px;color:#d8d9e9;border:1px solid #414768;border-radius:20px;padding:10px 13px}.logout{border:1px solid #414768;background:#11162c;color:#fff;border-radius:22px;padding:10px 17px}.layout{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:calc(100vh - 76px)}.sidebar{padding:18px 13px;border-right:1px solid var(--line);background:#090b17}.side-label{font-size:10px;letter-spacing:1.8px;color:#727b9e;padding:10px 13px}.navbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 14px;margin:4px 0;border:0;border-radius:12px;background:transparent;color:#e8e9f4;font-weight:700;font-size:14px}.navbtn span{width:23px;font-size:18px;text-align:center}.navbtn.active,.navbtn:hover{background:linear-gradient(100deg,#7800df,#35106f);box-shadow:0 5px 20px #9c00ff30}.side-note{margin:24px 5px 0;padding:15px;border:1px solid #6335a0;border-radius:15px;background:linear-gradient(145deg,#211044,#0b1741);font-size:12px;color:#c6c9df;line-height:1.5}.side-note b{color:#fff;display:block;margin-bottom:5px}.main{padding:26px;min-width:0}.heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}.heading h1{font-size:28px;margin:0}.heading p{color:var(--muted);margin:6px 0 0;font-size:13px}.btn{border:1px solid #414768;background:#151a31;color:#fff;border-radius:10px;padding:10px 14px;font-weight:700}.btn.purple{border:0;background:linear-gradient(90deg,#8500ff,#d000c9)}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin:18px 0}.card,.panel{background:linear-gradient(145deg,#12162c,#0e1122);border:1px solid var(--line);border-radius:16px;padding:19px}.card small{color:var(--muted);font-size:12px}.card strong{display:block;font-size:29px;margin-top:10px}.card .ico{float:right;font-size:23px}.panel{margin-top:17px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.panel h2{font-size:17px;margin:0}.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.quick{padding:17px;border:1px solid #414768;border-radius:13px;background:#151a31;color:#fff;text-align:left}.quick b{display:block;margin-bottom:6px}.quick small{color:var(--muted)}.notice{padding:12px 14px;border:1px solid #775a2a;background:#33250d55;border-radius:10px;color:#ffd27a;font-size:12px;line-height:1.5;margin:12px 0}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px;min-width:550px}th,td{padding:12px 10px;border-bottom:1px solid #282d49;text-align:left;vertical-align:top}th{color:#a6abc5;font-weight:700;white-space:nowrap}td{color:#ececff}.status{display:inline-block;padding:5px 9px;border-radius:20px;background:#183b32;color:#7ce6bd;font-size:11px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}.toolbar input,.toolbar select,.field{background:#090d1d;color:#fff;border:1px solid #414768;border-radius:9px;padding:10px 12px;outline:none}.toolbar input{min-width:220px}.empty{padding:22px;color:var(--muted);text-align:center}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.fieldbox label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}.fieldbox input,.fieldbox select{width:100%}.muted-note{font-size:12px;color:var(--muted);line-height:1.6}.footer-note{color:#717895;font-size:11px;text-align:center;padding:25px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:flex;overflow:auto;gap:5px;padding:8px}.side-label,.side-note{display:none}.navbtn{white-space:nowrap;width:auto;margin:0}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.main{padding:17px}.quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.topbar{padding:0 12px;height:68px}.admin-title{font-size:19px}.admin-title small{font-size:8px}.email-pill{display:none}.heading h1{font-size:23px}.cards,.quick-grid,.form-grid{grid-template-columns:1fr}.main{padding:13px}.card{padding:15px}}
+</style></head><body>
+<section id="loginScreen" class="auth-wrap"><div class="auth-card"><div class="auth-brand"><div class="brand"><div class="play">▶</div><div>TS <b>WORLD</b><small>ADMIN CONTROL CENTER</small></div></div></div><h1>Administrator Login</h1><p class="muted">Sign in with your authorised admin account</p><form id="loginForm"><label>Email address</label><input id="email" type="email" autocomplete="username" required placeholder="Admin email"><label>Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Admin password"><button class="primary" id="loginBtn" type="submit">Login to Admin</button></form><div style="text-align:right;margin-top:12px"><button class="linkbtn" id="forgotBtn" type="button">Forgot password?</button></div><div id="loginMsg" class="message"></div><div class="auth-foot">ADMIN ACCESS ONLY • TS WORLD</div></div></section>
+<div id="adminApp" class="hidden"><header class="topbar"><div class="admin-title">TS <span>WORLD</span><small>ADMIN CONTROL CENTER</small></div><div class="top-right"><span id="adminEmail" class="email-pill"></span><button class="logout" id="logoutBtn">Logout</button></div></header><div class="layout"><aside class="sidebar"><div class="side-label">MAIN CONTROL</div>
+<button class="navbtn active" data-tab="overview"><span>▦</span>Overview</button><button class="navbtn" data-tab="users"><span>♙</span>Registered Users</button><button class="navbtn" data-tab="videos"><span>▶</span>Video Management</button><button class="navbtn" data-tab="rewards"><span>🪙</span>Reward Rules</button><button class="navbtn" data-tab="wallet"><span>▱</span>Coins & Wallet</button><button class="navbtn" data-tab="withdrawals"><span>₹</span>Withdrawal Requests</button><button class="navbtn" data-tab="payments"><span>▣</span>Payment History</button><button class="navbtn" data-tab="collections"><span>▤</span>Collections</button><button class="navbtn" data-tab="settings"><span>⚙</span>Admin Settings</button><div class="side-note"><b>🔐 Admin-only area</b>Only the account with the admin role can access this control center.</div></aside>
+<main class="main">
+<section id="page-overview" class="page"><div class="heading"><div><h1>Admin Dashboard</h1><p>Platform overview and control at a glance</p></div><button class="btn" id="refreshOverview">↻ Refresh</button></div><div class="cards"><div class="card"><span class="ico">♙</span><small>Registered Users</small><strong id="countUsers">—</strong></div><div class="card"><span class="ico">▶</span><small>Total Videos</small><strong id="countVideos">—</strong></div><div class="card"><span class="ico">🪙</span><small>Reward Rules</small><strong id="countRules">—</strong></div><div class="card"><span class="ico">₹</span><small>Withdrawal Requests</small><strong id="countWithdrawals">—</strong></div></div><div class="panel"><div class="panel-head"><h2>Admin Quick Controls</h2></div><div class="quick-grid"><button class="quick" data-go="users"><b>♙ Registered Users</b><small>See who registered and when</small></button><button class="quick" data-go="videos"><b>▶ Manage Videos</b><small>Review platform video content</small></button><button class="quick" data-go="rewards"><b>🪙 Reward Rules</b><small>Set coins by video duration</small></button><button class="quick" data-go="withdrawals"><b>₹ Withdrawals</b><small>Review user payout requests</small></button><button class="quick" data-go="payments"><b>▣ Payments</b><small>Track paid and pending payouts</small></button><button class="quick" data-go="settings"><b>⚙ Settings</b><small>Administrator account details</small></button></div></div><div class="panel"><div class="panel-head"><h2>Latest Registrations</h2><button class="btn" data-go="users">View all</button></div><div class="table-wrap"><table><thead><tr><th>Email</th><th>Role</th><th>Registered</th></tr></thead><tbody id="latestUsers"><tr><td colspan="3" class="empty">Loading registrations…</td></tr></tbody></table></div></div></section>
+<section id="page-users" class="page hidden"><div class="heading"><div><h1>Registered Users</h1><p>All accounts registered in TS WORLD</p></div><button class="btn" id="refreshUsers">↻ Refresh</button></div><div class="panel"><div class="toolbar"><input id="userSearch" placeholder="Search email or user ID..."><button class="btn" id="exportUsers">Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Email</th><th>Role</th><th>User ID</th><th>Registered At</th></tr></thead><tbody id="usersBody"><tr><td colspan="4" class="empty">Loading users…</td></tr></tbody></table></div></div></section>
+<section id="page-videos" class="page hidden"><div class="heading"><div><h1>Video Management</h1><p>Admin control for uploaded and published videos</p></div><button class="btn" data-reload="videos">↻ Refresh</button></div><div class="panel"><div class="toolbar"><input id="videoSearch" placeholder="Search videos..."><select id="videoStatus"><option value="">All statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div><div id="videosContent" class="empty">Loading video records…</div></div></section>
+<section id="page-rewards" class="page hidden"><div class="heading"><div><h1>Reward Rules</h1><p>Set the coin reward based on video duration</p></div><button class="btn" data-reload="rewards">↻ Refresh</button></div><div class="panel"><h2>Reward rule setup</h2><div class="notice">The Reward Rules screen is designed. I will connect Save/Edit after confirming the exact columns in your existing <b>reward_rules</b> table, so existing data is not damaged.</div><div class="form-grid"><div class="fieldbox"><label>Minimum video duration (minutes)</label><input class="field" type="number" min="0" placeholder="e.g. 1" disabled></div><div class="fieldbox"><label>Maximum video duration (minutes)</label><input class="field" type="number" min="0" placeholder="e.g. 5" disabled></div><div class="fieldbox"><label>Coins to award</label><input class="field" type="number" min="0" placeholder="e.g. 5" disabled></div></div><button class="btn purple" style="margin-top:14px" disabled>Save Reward Rule (connect next)</button></div><div class="panel"><div class="panel-head"><h2>Existing Reward Rules</h2></div><div id="rulesContent" class="empty">Loading reward rules…</div></div></section>
+<section id="page-wallet" class="page hidden"><div class="heading"><div><h1>Coins & Wallet</h1><p>View coin balances and reward activity</p></div></div><div class="panel"><div class="notice">Wallet and coin ledger need their database table. This screen is reserved for total coins issued, user balances and transaction history.</div><div class="cards"><div class="card"><small>Total coins issued</small><strong>—</strong></div><div class="card"><small>Coins redeemed</small><strong>—</strong></div><div class="card"><small>Active wallets</small><strong>—</strong></div><div class="card"><small>Pending rewards</small><strong>—</strong></div></div></div></section>
+<section id="page-withdrawals" class="page hidden"><div class="heading"><div><h1>Withdrawal Requests</h1><p>Review user requests and payout status</p></div><button class="btn" data-reload="withdrawals">↻ Refresh</button></div><div class="panel"><div id="withdrawalsContent" class="empty">Loading withdrawal requests…</div></div></section>
+<section id="page-payments" class="page hidden"><div class="heading"><div><h1>Payment History</h1><p>Track payment status and transaction references</p></div><button class="btn" data-reload="payments">↻ Refresh</button></div><div class="panel"><div id="paymentsContent" class="empty">Loading payment records…</div></div></section>
+<section id="page-collections" class="page hidden"><div class="heading"><div><h1>Collections</h1><p>Platform content and storage overview</p></div><button class="btn" data-reload="collections">↻ Refresh</button></div><div class="panel"><div id="collectionsContent" class="empty">Checking Supabase collections…</div></div></section>
+<section id="page-settings" class="page hidden"><div class="heading"><div><h1>Admin Settings</h1><p>Administrator account and access information</p></div></div><div class="panel"><h2>Signed-in administrator</h2><p id="settingsEmail"></p><p class="muted-note">Admin access is checked against the <b>public.profiles.role</b> value. Only an account with role <b>admin</b> is allowed into this dashboard. Regular users will be signed out from this admin-only page.</p></div></section>
+<div class="footer-note">TS WORLD • ADMIN CONTROL CENTER</div></main></div></div>
 <script>
-const SUPABASE_URL = 'https://pcublhazcdcoggpxslxy.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_QfldbvMQLx9aDiMLt18DWg_CSX5pY5q';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-});
-let authMode = 'login';
-
-const $ = id => document.getElementById(id);
-function clearAuthFields(){
-  $('nameInput').value = '';
-  $('emailInput').value = '';
-  $('passwordInput').value = '';
-  $('authMessage').textContent = '';
-  $('authMessage').style.color = '#ffb5b5';
+const SUPABASE_URL='https://pcublhazcdcoggpxslxy.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_QfldbvMQLx9aDiMLt18DWg_CSX5pY5q';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);let currentUsers=[];let currentAdmin=null;
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function showLogin(message=''){ $('adminApp').classList.add('hidden');$('loginScreen').classList.remove('hidden');$('loginMsg').textContent=message; $('password').value=''; }
+async function enterAdmin(user){
+ const {data:profile,error}=await sb.from('profiles').select('role,email').eq('user_id',user.id).maybeSingle();
+ if(error){await sb.auth.signOut({scope:'local'});showLogin('Could not verify admin role. Check profiles SELECT policy: '+error.message);return;}
+ if(String(profile?.role||'').toLowerCase()!=='admin'){await sb.auth.signOut({scope:'local'});showLogin('Admin access only. This account does not have the admin role.');return;}
+ currentAdmin=user;$('adminEmail').textContent=user.email||'';$('settingsEmail').textContent=user.email||'';$('loginScreen').classList.add('hidden');$('adminApp').classList.remove('hidden');openTab('overview');await loadOverview();
 }
-function setMode(mode){
-  authMode = mode;
-  const signup = mode === 'signup';
-  const forgot = mode === 'forgot';
-  const reset = mode === 'reset';
-  $('authTitle').textContent = signup ? 'Create Account' : forgot ? 'Reset Password' : reset ? 'Choose New Password' : 'Welcome Back';
-  $('authSub').textContent = signup ? 'Register to join TS WORLD' : forgot ? 'Enter your registered email address' : reset ? 'Enter your new password' : 'Login to continue to TS WORLD';
-  $('authSubmit').textContent = signup ? 'Create Account' : forgot ? 'Send Reset Link' : reset ? 'Update Password' : 'Login';
-  $('nameLabel').classList.toggle('hidden', !signup);
-  $('nameInput').classList.toggle('hidden', !signup);
-  $('nameInput').required = signup;
-  $('emailInput').classList.toggle('hidden', reset);
-  $('emailInput').required = !reset;
-  $('passwordInput').classList.toggle('hidden', forgot);
-  $('passwordInput').required = !forgot;
-  $('passwordInput').placeholder = reset ? 'Enter new password (minimum 6 characters)' : 'Enter password (minimum 6 characters)';
-  $('forgotWrap').classList.toggle('hidden', signup || forgot || reset);
-  $('switchText').textContent = signup ? 'Already have an account?' : forgot ? 'Remember your password?' : reset ? '' : 'New to TS WORLD?';
-  $('switchMode').textContent = signup || forgot ? 'Login' : reset ? '' : 'Create account';
-  $('switchMode').classList.toggle('hidden', reset);
-  clearAuthFields();
-}
-$('switchMode').addEventListener('click',()=>setMode('login'===authMode?'signup':'login'));
-$('forgotButton').addEventListener('click',()=>setMode('forgot'));
-
-async function showApp(user){
-  let role = 'user';
-  const {data:profile,error} = await supabaseClient.from('profiles').select('role').eq('user_id',user.id).maybeSingle();
-  if(profile && profile.role) role = String(profile.role).toLowerCase();
-  else if(!error){
-    await supabaseClient.from('profiles').insert({user_id:user.id,email:user.email,role:'user'});
-  }
-  $('authScreen').classList.add('hidden');
-  document.body.dataset.role = role;
-  if(role === 'admin'){
-    $('appScreen').classList.add('hidden');
-    $('adminScreen').classList.remove('hidden');
-    $('adminEmail').textContent = user.email || '';
-    $('adminSettingsEmail').textContent = user.email || '';
-    openAdminTab('overview',document.querySelector('[data-admin-tab="overview"]'));
-    loadAdminOverview();
-  }else{
-    $('adminScreen').classList.add('hidden');
-    $('appScreen').classList.remove('hidden');
-    $('userLabel').textContent = user.email || 'User';
-  }
-}
-async function logout(){
-  const {error}=await supabaseClient.auth.signOut({scope:'local'});
-  if(error){ alert('Logout failed: '+error.message); return; }
-  $('appScreen').classList.add('hidden');
-  $('authScreen').classList.remove('hidden');
-  setMode('login');
-  // Clear fields so the previous account/password is not left in the form.
-  clearAuthFields();
-}
-$('authForm').addEventListener('submit',async(e)=>{
-  e.preventDefault();
-  const msg=$('authMessage');
-  const email=$('emailInput').value.trim();
-  const password=$('passwordInput').value;
-  const submit=$('authSubmit');
-  submit.disabled=true; submit.textContent='Please wait...'; msg.textContent='';
-  try{
-    if(authMode==='forgot'){
-      const redirectTo=window.location.origin+window.location.pathname;
-      const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo});
-      if(error) throw error;
-      msg.style.color='#ffd27a';
-      msg.textContent='Password reset link sent. Check your email inbox.';
-    }else if(authMode==='reset'){
-      const {error}=await supabaseClient.auth.updateUser({password});
-      if(error) throw error;
-      msg.style.color='#9cf0b0';
-      msg.textContent='Password updated successfully. Please login with your new password.';
-      await supabaseClient.auth.signOut({scope:'local'});
-      setMode('login');
-    }else if(authMode==='signup'){
-      const name=$('nameInput').value.trim();
-      const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{full_name:name}}});
-      if(error) throw error;
-      $('passwordInput').value='';
-      if(data.session){
-        await showApp(data.user);
-      }else{
-        msg.style.color='#ffd27a';
-        msg.textContent='Registration successful. Check your email to confirm, then login.';
-      }
-    }else{
-      const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
-      if(error) throw error;
-      $('passwordInput').value='';
-      await showApp(data.user);
-    }
-  }catch(err){
-    msg.style.color='#ffb5b5';
-    msg.textContent=err.message || 'Something went wrong. Please try again.';
-  }finally{
-    submit.disabled=false;
-    submit.textContent=authMode==='signup'?'Create Account':authMode==='forgot'?'Send Reset Link':authMode==='reset'?'Update Password':'Login';
-  }
-});
-async function initAuth(){
-  const {data:{session}}=await supabaseClient.auth.getSession();
-  if(session?.user) await showApp(session.user);
-  else {
-    $('appScreen').classList.add('hidden');
-    $('authScreen').classList.remove('hidden');
-    setMode('login');
-  }
-}
-supabaseClient.auth.onAuthStateChange((event,session)=>{
-  if(event==='PASSWORD_RECOVERY'){
-    setMode('reset');
-    $('authScreen').classList.remove('hidden');
-    $('appScreen').classList.add('hidden');
-  }else if(event==='SIGNED_OUT'){
-    $('appScreen').classList.add('hidden');
-    $('authScreen').classList.remove('hidden');
-    setMode('login');
-  }
-});
-function openAdminTab(tab,button){
-  document.querySelectorAll('.admin-tab').forEach(el=>el.classList.add('hidden'));
-  const target=$('admin'+tab.charAt(0).toUpperCase()+tab.slice(1));
-  if(target) target.classList.remove('hidden');
-  document.querySelectorAll('.admin-side button').forEach(el=>el.classList.remove('active'));
-  if(button) button.classList.add('active');
-  if(tab==='users') loadAdminUsers();
-  if(tab==='rewards') loadAdminRules();
-}
-async function loadAdminOverview(){
-  const [users,rules,videos,withdrawals]=await Promise.all([
-    supabaseClient.from('profiles').select('*',{count:'exact',head:true}),
-    supabaseClient.from('reward_rules').select('*',{count:'exact',head:true}),
-    supabaseClient.from('videos').select('*',{count:'exact',head:true}),
-    supabaseClient.from('withdrawal_requests').select('*',{count:'exact',head:true})
-  ]);
-  $('adminUserCount').textContent=users.count ?? '—';
-  $('adminRuleCount').textContent=rules.count ?? '—';
-  $('adminVideoCount').textContent=videos.error?'Not connected':(videos.count ?? 0);
-  $('adminWithdrawalCount').textContent=withdrawals.error?'Not connected':(withdrawals.count ?? 0);
-}
-async function loadAdminUsers(){
-  const body=$('adminUsersBody'); body.innerHTML='<tr><td colspan="3">Loading…</td></tr>';
-  const {data,error}=await supabaseClient.from('profiles').select('user_id,email,role').order('created_at',{ascending:false}).limit(100);
-  if(error){body.innerHTML='<tr><td colspan="3">Could not load users: '+escapeHtml(error.message)+'</td></tr>';return;}
-  body.innerHTML=data.length?data.map(u=>'<tr><td>'+escapeHtml(u.email||'')+'</td><td>'+escapeHtml(u.role||'user')+'</td><td>'+escapeHtml(u.user_id||'')+'</td></tr>').join(''):'<tr><td colspan="3">No users found</td></tr>';
-}
-async function loadAdminRules(){
-  const box=$('adminRulesData'); box.textContent='Loading reward rules…';
-  const {data,error}=await supabaseClient.from('reward_rules').select('*').limit(100);
-  if(error){box.textContent='Could not load reward rules: '+error.message;return;}
-  if(!data.length){box.textContent='No reward rules added yet.';return;}
-  box.innerHTML='<pre style="white-space:pre-wrap;overflow-wrap:anywhere;color:#e7e8f5">'+escapeHtml(JSON.stringify(data,null,2))+'</pre>';
-}
-function escapeHtml(value){
- return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-}
-function filterCategory(category,button){
- document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));button.classList.add('active');
- document.querySelectorAll('.video').forEach(card=>card.style.display=(category==='All'||card.dataset.category===category)?'block':'none');
-}
-function searchVideos(){
- const q=$('searchInput').value.toLowerCase().trim();
- document.querySelectorAll('.video').forEach(card=>card.style.display=card.innerText.toLowerCase().includes(q)?'block':'none');
-}
-$('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchVideos()});
-initAuth();
-</script>
-</body>
-</html>
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();let b=$('loginBtn');b.disabled=true;b.textContent='Checking…';$('loginMsg').textContent='';try{let {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;await enterAdmin(data.user);}catch(err){$('loginMsg').textContent=err.message||'Login failed';}finally{b.disabled=false;b.textContent='Login to Admin';}});
+$('forgotBtn').addEventListener('click',async()=>{let email=$('email').value.trim();if(!email){$('loginMsg').textContent='Enter your admin email first.';return;}let {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});$('loginMsg').textContent=error?error.message:'Password reset link sent. Check your email.';});
+$('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut({scope:'local'});currentAdmin=null;showLogin('You have been logged out.');});
+sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentAdmin=null;showLogin();}});
+async function init(){const {data:{session}}=await sb.auth.getSession();if(session?.user)await enterAdmin(session.user);else showLogin();}
+function openTab(tab){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$('page-'+tab)?.classList.remove('hidden');document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='users')loadUsers();if(tab==='videos')loadGeneric('videos','videosContent');if(tab==='rewards')loadRules();if(tab==='withdrawals')loadGeneric('withdrawal_requests','withdrawalsContent');if(tab==='payments')loadGeneric('payments','paymentsContent');if(tab==='collections')loadCollections();}
+document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.tab)));document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.go)));
+async function countTable(table){let {count,error}=await sb.from(table).select('*',{count:'exact',head:true});return error?'Not set':(count??0);}
+async function loadOverview(){let [u,v,r,w]=await Promise.all(['profiles','videos','reward_rules','withdrawal_requests'].map(countTable));$('countUsers').textContent=u;$('countVideos').textContent=v;$('countRules').textContent=r;$('countWithdrawals').textContent=w;await loadLatestUsers();}
+$('refreshOverview').addEventListener('click',loadOverview);
+async function loadLatestUsers(){let body=$('latestUsers');body.innerHTML='<tr><td colspan="3" class="empty">Loading…</td></tr>';let {data,error}=await sb.from('profiles').select('email,role,created_at').order('created_at',{ascending:false}).limit(6);if(error){body.innerHTML='<tr><td colspan="3" class="empty">'+esc(error.message)+'</td></tr>';return;}body.innerHTML=data?.length?data.map(x=>`<tr><td>${esc(x.email)}</td><td><span class="status">${esc(x.role||'user')}</span></td><td>${x.created_at?new Date(x.created_at).toLocaleString():''}</td></tr>`).join(''):'<tr><td colspan="3" class="empty">No registered profiles found.</td></tr>';}
+async function loadUsers(){let body=$('usersBody');body.innerHTML='<tr><td colspan="4" class="empty">Loading users…</td></tr>';let {data,error}=await sb.from('profiles').select('user_id,email,role,created_at').order('created_at',{ascending:false}).limit(500);if(error){body.innerHTML='<tr><td colspan="4" class="empty">Could not load users: '+esc(error.message)+'</td></tr>';return;}currentUsers=data||[];renderUsers();}
+function renderUsers(){let q=$('userSearch').value.toLowerCase();let rows=currentUsers.filter(x=>(x.email||'').toLowerCase().includes(q)||(x.user_id||'').toLowerCase().includes(q));$('usersBody').innerHTML=rows.length?rows.map(x=>`<tr><td>${esc(x.email)}</td><td><span class="status">${esc(x.role||'user')}</span></td><td>${esc(x.user_id)}</td><td>${x.created_at?new Date(x.created_at).toLocaleString():''}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">No matching users.</td></tr>';}
+$('userSearch').addEventListener('input',renderUsers);$('refreshUsers').addEventListener('click',loadUsers);
+$('exportUsers').addEventListener('click',()=>{let rows=[['Email','Role','User ID','Registered At'],...currentUsers.map(x=>[x.email,x.role,x.user_id,x.created_at])];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='TS-WORLD-users.csv';a.click();URL.revokeObjectURL(a.href);});
+function renderRows(data,box){if(!data?.length){box.innerHTML='<div class="empty">No records found in this table.</div>';return;}let cols=Object.keys(data[0]);box.innerHTML='<div class="table-wrap"><table><thead><tr>'+cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+data.map(row=>'<tr>'+cols.map(c=>'<td>'+esc(typeof row[c]==='object'?JSON.stringify(row[c]):row[c])+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';}
+async function loadGeneric(table,boxId){let box=$(boxId);box.innerHTML='<div class="empty">Loading '+esc(table)+'…</div>';let {data,error}=await sb.from(table).select('*').limit(100);if(error){box.innerHTML='<div class="notice">The <b>'+esc(table)+'</b> table is not available or access is blocked. Supabase message: '+esc(error.message)+'</div>';return;}renderRows(data,box);}
+async function loadRules(){let box=$('rulesContent');box.innerHTML='<div class="empty">Loading reward_rules…</div>';let {data,error}=await sb.from('reward_rules').select('*').limit(100);if(error){box.innerHTML='<div class="notice">Could not read reward_rules: '+esc(error.message)+'</div>';return;}renderRows(data,box);}
+async function loadCollections(){let box=$('collectionsContent');box.innerHTML='<div class="empty">Checking storage access…</div>';let {data,error}=await sb.storage.listBuckets();if(error){box.innerHTML='<div class="notice">Storage access unavailable: '+esc(error.message)+'</div>';return;}box.innerHTML=data?.length?'<div class="table-wrap"><table><thead><tr><th>Collection / Bucket</th><th>Public</th><th>Created</th></tr></thead><tbody>'+data.map(b=>`<tr><td>${esc(b.name)}</td><td>${b.public?'Yes':'No'}</td><td>${esc(b.created_at||'')}</td></tr>`).join('')+'</tbody></table></div>':'<div class="empty">No storage buckets created yet.</div>';}
+document.querySelectorAll('[data-reload]').forEach(b=>b.addEventListener('click',()=>{let t=b.dataset.reload;if(t==='videos')loadGeneric('videos','videosContent');if(t==='rewards')loadRules();if(t==='withdrawals')loadGeneric('withdrawal_requests','withdrawalsContent');if(t==='payments')loadGeneric('payments','paymentsContent');if(t==='collections')loadCollections();}));
+$('videoSearch').addEventListener('input',()=>{});$('videoStatus').addEventListener('change',()=>{});
+init();
+</script></body></html>
