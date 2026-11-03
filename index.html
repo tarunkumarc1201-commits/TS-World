@@ -54,6 +54,8 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 \n@media(max-width:1100px){.videos{grid-template-columns:repeat(3,minmax(0,1fr))}.brand{min-width:190px}.topbar{gap:14px;padding:0 16px}}
 @media(max-width:760px){.topbar{height:auto;min-height:66px;flex-wrap:wrap;padding:12px}.brand{min-width:0;flex:1;font-size:22px}.brand .play{width:36px;height:36px}.search{order:3;flex-basis:100%;max-width:none}.top-actions .upload{display:none}.layout{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line);padding:8px 10px}.nav{display:flex;overflow:auto;gap:4px}.nav a{white-space:nowrap;padding:10px 12px}.nav hr,.earnbox{display:none}main{padding:14px}.hero{padding:25px 22px;min-height:230px}.hero:after{right:2%;font-size:110px}.hero p{max-width:80%}.videos{grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 11px}}
 @media(max-width:430px){.videos{grid-template-columns:1fr}.hero h1{font-size:34px}.hero .tag{font-size:17px}.hero p{max-width:100%}.hero:after{opacity:.4}}
+
+.video-upload-form{display:grid;gap:9px;max-width:720px;margin-top:16px}.video-upload-form label{font-size:13px;color:#d7d8e8;margin-top:5px}.video-upload-form input,.video-upload-form textarea,.video-upload-form select{width:100%;padding:12px;border:1px solid #414768;border-radius:10px;background:#090d1d;color:#fff;font:inherit}.video-upload-form input[type=file]{padding:10px}.upload-progress{font-size:13px;color:#ffd27a;min-height:22px;overflow-wrap:anywhere}.video-upload-form button{justify-self:start;min-width:170px}.video-row{padding:12px 0;border-bottom:1px solid #282d49;overflow-wrap:anywhere}.video-row a{color:#dca5ff}
 </style>
 </head>
 <body>
@@ -101,7 +103,22 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 <button class="admin-action" onclick="openAdminTab('settings')"><b>⚙ Platform Settings</b><span>Admin-only platform configuration</span></button>
 </div></div>
 </section>
-<section id="adminVideos" class="admin-tab hidden"><div class="admin-heading"><div><h1>Video Management</h1><p>Admin video controls</p></div></div><div class="admin-panel"><p class="admin-note" id="videoAdminMessage">Video data table is not connected yet. The admin screen is separate from the user dashboard.</p></div></section>
+<section id="adminVideos" class="admin-tab hidden">
+<div class="admin-heading"><div><h1>Video Management</h1><p>Upload and manage videos from the admin account</p></div><button class="admin-action" type="button" onclick="loadAdminVideos()">↻ Refresh</button></div>
+<div class="admin-panel">
+<h2>＋ Upload New Video</h2>
+<form id="adminVideoUploadForm" class="video-upload-form">
+<label for="adminVideoTitle">Video title</label><input id="adminVideoTitle" type="text" maxlength="160" required placeholder="Enter video title">
+<label for="adminVideoDescription">Description</label><textarea id="adminVideoDescription" rows="3" maxlength="2000" placeholder="Write a short description"></textarea>
+<label for="adminVideoCategory">Category</label><select id="adminVideoCategory"><option>Education</option><option>Entertainment</option><option>Technology</option><option>Music</option><option>Sports</option><option>Travel</option><option>Other</option></select>
+<label for="adminVideoFile">Choose video file (MP4, MOV, WEBM — max 50 MB)</label><input id="adminVideoFile" type="file" accept="video/mp4,video/quicktime,video/webm,video/*" required>
+<div class="upload-progress" id="adminVideoProgress" role="status">Select a video to upload.</div>
+<button class="admin-action" id="adminVideoUploadBtn" type="submit">⬆ Upload Video</button>
+</form>
+<p class="admin-note" id="videoAdminMessage">Uploads use the Supabase Storage bucket named <b>videos</b> and save video details in the <b>videos</b> table. If either is missing or access is blocked, the exact Supabase error will appear here.</p>
+</div>
+<div class="admin-panel"><h2>Uploaded Videos</h2><div id="adminVideosList" class="admin-note">Open this tab to load videos.</div></div>
+</section>
 <section id="adminUsers" class="admin-tab hidden"><div class="admin-heading"><div><h1>User Management</h1><p>Registered TS WORLD accounts</p></div></div><div class="admin-panel"><table class="admin-table"><thead><tr><th>Email</th><th>Role</th><th>User ID</th></tr></thead><tbody id="adminUsersBody"><tr><td colspan="3">Loading users…</td></tr></tbody></table></div></section>
 <section id="adminRewards" class="admin-tab hidden"><div class="admin-heading"><div><h1>Reward Rules</h1><p>Coin rewards configuration</p></div></div><div class="admin-panel"><p class="admin-note">Reward rules table exists in your Supabase project. Its exact column structure must be checked before safely enabling add/edit controls.</p><div id="adminRulesData">Loading reward rules…</div></div></section>
 <section id="adminWithdrawals" class="admin-tab hidden"><div class="admin-heading"><div><h1>Withdrawal Requests</h1><p>Review user payout requests</p></div></div><div class="admin-panel"><p class="admin-note">Withdrawal request storage and payment status table are not connected yet.</p></div></section>
@@ -142,6 +159,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLI
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
 });
 let authMode = 'login';
+let currentSignedInUser = null;
 
 const $ = id => document.getElementById(id);
 function clearAuthFields(){
@@ -180,6 +198,7 @@ $('forgotButton').addEventListener('click',()=>setMode('forgot'));
 // Keep database RLS policies enabled; this client-side check controls navigation only.
 const ADMIN_EMAILS = ['tarunkumarc1201@gmail.com'];
 async function showApp(user){
+  currentSignedInUser = user;
   const email = String(user.email || '').trim().toLowerCase();
   let role = '';
   let profileError = null;
@@ -211,6 +230,7 @@ async function showApp(user){
   }
 }
 async function logout(){
+  currentSignedInUser = null;
   const {error}=await supabaseClient.auth.signOut({scope:'local'});
   if(error){ alert('Logout failed: '+error.message); return; }
   $('appScreen').classList.add('hidden');
@@ -293,6 +313,7 @@ function openAdminTab(tab,button){
   document.querySelectorAll('.admin-side button').forEach(el=>el.classList.remove('active'));
   if(button) button.classList.add('active');
   if(tab==='users') loadAdminUsers();
+  if(tab==='videos') loadAdminVideos();
   if(tab==='rewards') loadAdminRules();
 }
 async function loadAdminOverview(){
@@ -323,6 +344,56 @@ async function loadAdminRules(){
 function escapeHtml(value){
  return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
+const VIDEO_BUCKET = 'videos';
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+function setVideoMessage(message, isError=false){
+ const el=$('adminVideoProgress'); if(el){el.textContent=message;el.style.color=isError?'#ff9cae':'#ffd27a';}
+ const note=$('videoAdminMessage'); if(note) note.textContent=message;
+}
+async function loadAdminVideos(){
+ const box=$('adminVideosList'); if(!box) return;
+ box.textContent='Loading uploaded videos…';
+ const {data,error}=await supabaseClient.from('videos').select('*').order('created_at',{ascending:false}).limit(100);
+ if(error){box.textContent='Could not load videos: '+error.message;return;}
+ if(!data?.length){box.textContent='No videos found in the videos table yet.';return;}
+ box.innerHTML=data.map(v=>{
+   const title=escapeHtml(v.title||v.name||'Untitled video');
+   const url=v.video_url||v.url||v.public_url||'';
+   return '<div class="video-row"><b>'+title+'</b><div>'+escapeHtml(v.description||'')+'</div>'+(url?'<a href="'+escapeHtml(url)+'" target="_blank" rel="noopener">Open video</a>':'<span>Video URL column is empty</span>')+'</div>';
+ }).join('');
+}
+$('adminVideoUploadForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const file=$('adminVideoFile').files?.[0];
+ const title=$('adminVideoTitle').value.trim();
+ const description=$('adminVideoDescription').value.trim();
+ const category=$('adminVideoCategory').value;
+ const btn=$('adminVideoUploadBtn');
+ if(!file){setVideoMessage('Please choose a video file.',true);return;}
+ if(!file.type.startsWith('video/')){setVideoMessage('Selected file is not a video. Choose MP4, MOV or WEBM.',true);return;}
+ if(file.size>MAX_VIDEO_BYTES){setVideoMessage('File is larger than 50 MB. Supabase free storage commonly limits uploads; choose a smaller video.',true);return;}
+ if(!currentSignedInUser){setVideoMessage('Admin session not found. Please log in again.',true);return;}
+ btn.disabled=true;btn.textContent='Uploading…';
+ try{
+   const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+   const path=currentSignedInUser.id+'/'+Date.now()+'_'+safeName;
+   setVideoMessage('Uploading video to Supabase Storage…');
+   const {data:stored,error:storageError}=await supabaseClient.storage.from(VIDEO_BUCKET).upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type});
+   if(storageError) throw new Error('Storage upload failed: '+storageError.message+' (Check that the videos bucket exists and Storage INSERT policy allows the admin.)');
+   const {data:publicData}=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(stored.path);
+   const videoUrl=publicData?.publicUrl||'';
+   setVideoMessage('File uploaded. Saving video details…');
+   const record={title,description,category,video_url:videoUrl,storage_path:stored.path,status:'published',uploaded_by:currentSignedInUser.id};
+   const {error:dbError}=await supabaseClient.from('videos').insert(record);
+   if(dbError){setVideoMessage('Video file uploaded, but saving its details failed: '+dbError.message+'. Storage path: '+stored.path+'. Check the videos table columns and INSERT policy.',true);return;}
+   $('adminVideoUploadForm').reset();
+   setVideoMessage('Upload successful! Video saved and published.');
+   await loadAdminVideos();
+   await loadAdminOverview();
+ }catch(err){setVideoMessage(err.message||'Upload failed. Please try again.',true);}
+ finally{btn.disabled=false;btn.textContent='⬆ Upload Video';}
+});
+
 function filterCategory(category,button){
  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));button.classList.add('active');
  document.querySelectorAll('.video').forEach(card=>card.style.display=(category==='All'||card.dataset.category===category)?'block':'none');
