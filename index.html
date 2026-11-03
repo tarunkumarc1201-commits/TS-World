@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TS WORLD - Watch & Earn</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fff;color:#202124}
+header{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid #eee;position:sticky;top:0;background:white;z-index:5}
+.logo{font-size:24px;font-weight:bold;color:#e62117}
+.logo span{color:#222}
+.search{width:40%;padding:12px 18px;border:1px solid #ddd;border-radius:25px;font-size:15px}
+button{cursor:pointer;border:0}
+.profile{background:#e62117;color:white;padding:10px 17px;border-radius:22px}
+.layout{display:flex}
+aside{width:205px;padding:20px;min-height:90vh;border-right:1px solid #eee}
+aside div{padding:14px 8px;border-radius:9px;cursor:pointer}
+aside div:hover,.active{background:#fce9e8}
+main{flex:1;padding:22px;min-width:0}
+.categories{display:flex;gap:12px;overflow:auto;margin-bottom:25px}
+.categories button{background:#f1f1f1;padding:10px 18px;border-radius:8px;white-space:nowrap}
+.categories button:first-child{background:#222;color:white}
+h2{font-size:21px}
+.videos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.video{cursor:pointer}
+.thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:#eee}
+.video h3{font-size:16px;margin:10px 0 6px}
+.info{font-size:13px;color:#777}
+.earn{background:#fff1f0;padding:18px;border-radius:12px;margin-bottom:22px}
+.earn strong{color:#e62117}
+@media(max-width:850px){aside{width:65px;padding:8px}aside div{font-size:0;text-align:center}.videos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){header{padding:0 10px}.search{width:38%}.logo{font-size:19px}main{padding:12px}.videos{grid-template-columns:1fr 1fr;gap:12px}.video h3{font-size:14px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">▶ TS <span>WORLD</span></div>
+  <input class="search" placeholder="Search videos..." id="search">
+  <button class="profile" onclick="alert('Login will be available soon')">Login</button>
+</header>
+<div class="layout">
+<aside>
+  <div class="active">🏠 Home</div>
+  <div>🔥 Trending</div>
+  <div>🎬 Shorts</div>
+  <div>📺 My Channel</div>
+  <div>⬆ Upload</div>
+  <div>🪙 My Wallet</div>
+  <div>👤 Profile</div>
+</aside>
+<main>
+  <div class="earn">
+    <strong>🎁 TS WORLD – Watch • Create • Earn</strong>
+    <p>Watch videos, create your channel and earn rewards!</p>
+  </div>
+  <div class="categories">
+    <button>All</button><button>Education</button>
+    <button>Entertainment</button><button>Technology</button>
+    <button>Music</button><button>Sports</button><button>News</button>
+  </div>
+  <h2>Recommended Videos</h2>
+  <div class="videos" id="videos">
+    <div class="video">
+      <img class="thumb" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600">
+      <h3>Beautiful Nature – 4K Video</h3>
+      <div class="info">Nature World • HD Video</div>
+    </div>
+    <div class="video">
+      <img class="thumb" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600">
+      <h3>Learn New Technology</h3>
+      <div class="info">Tech Channel • HD Video</div>
+    </div>
+    <div class="video">
+      <img class="thumb" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600">
+      <h3>Music & Entertainment</h3>
+      <div class="info">Music World • HD Video</div>
+    </div>
+    <div class="video">
+      <img class="thumb" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600">
+      <h3>Education – Learn Every Day</h3>
+      <div class="info">Education Hub • HD Video</div>
+    </div>
+    <div class="video">
+      <img class="thumb" src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600">
+      <h3>Sports & Fitness</h3>
+      <div class="info">Sports Channel • HD Video</div>
+    </div>
+    <div class="video">
+      <img class="thumb" src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600">
+      <h3>Digital Creator World</h3>
+      <div class="info">Creator Studio • HD Video</div>
+    </div>
+  </div>
+</main>
+</div>
+<script>
+document.getElementById('search').addEventListener('input',function(){
+ const q=this.value.toLowerCase();
+ document.querySelectorAll('.video').forEach(v=>{
+ v.style.display=v.innerText.toLowerCase().includes(q)?'block':'none';
+ });
+});
+</script>
+</body>
+</html>
