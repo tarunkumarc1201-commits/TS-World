@@ -26,7 +26,32 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 .auth-card label{display:block;font-size:13px;color:#d7d8e8;margin:13px 0 7px}.auth-card input{width:100%;padding:13px 14px;border:1px solid #414768;border-radius:10px;background:#090d1d;color:white;outline:none}.auth-card input:focus{border-color:#b34cff}
 .auth-submit{width:100%;padding:13px;border:0;border-radius:25px;margin-top:20px;color:white;font-weight:800;background:linear-gradient(90deg,#8500ff,#e000d2);cursor:pointer}
 .auth-switch{text-align:center;color:#bfc2d8;font-size:13px;margin-top:18px}.auth-switch button{background:none;border:0;color:#e34cff;font-weight:800;cursor:pointer}.message{min-height:20px;margin-top:12px;text-align:center;font-size:13px;color:#ffb5b5}.user-pill{font-size:12px;color:#d8d9e9;border:1px solid #414768;border-radius:20px;padding:10px 13px}
-@media(max-width:1100px){.videos{grid-template-columns:repeat(3,minmax(0,1fr))}.brand{min-width:190px}.topbar{gap:14px;padding:0 16px}}
+ 
+.admin-shell{min-height:100vh;background:radial-gradient(circle at 80% 0%,#20104b 0,transparent 35%),#070812;color:#f7f7ff}
+.admin-top{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #282d49;background:#080914}
+.admin-title{font-size:24px;font-weight:900}.admin-title span{color:#ffc52d}
+.admin-layout{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:calc(100vh - 76px)}
+.admin-side{padding:22px 14px;border-right:1px solid #282d49;background:#090b17}
+.admin-side button{display:block;width:100%;text-align:left;padding:13px 15px;margin:5px 0;border:0;border-radius:12px;background:transparent;color:#e8e9f4;font-weight:700;cursor:pointer}
+.admin-side button.active,.admin-side button:hover{background:linear-gradient(100deg,#7800df,#35106f)}
+.admin-main{padding:28px;min-width:0}
+.admin-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}
+.admin-heading h1{margin:0;font-size:28px}.admin-heading p{color:#a6abc5;margin:6px 0 0}
+.admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:20px 0}
+.admin-card{background:#101326;border:1px solid #282d49;border-radius:16px;padding:20px}
+.admin-card small{color:#a6abc5}.admin-card strong{display:block;font-size:28px;margin-top:9px}
+.admin-panel{background:#101326;border:1px solid #282d49;border-radius:16px;padding:20px;margin-top:18px}
+.admin-panel h2{font-size:18px;margin:0 0 14px}
+.admin-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.admin-action{padding:18px;border:1px solid #414768;border-radius:14px;background:#151a31;color:#fff;text-align:left;cursor:pointer}
+.admin-action b{display:block;margin-bottom:7px}.admin-action span{color:#a6abc5;font-size:12px}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px}.admin-table th,.admin-table td{padding:11px;border-bottom:1px solid #282d49;text-align:left;overflow-wrap:anywhere}
+.admin-table th{color:#a6abc5}
+.admin-note{color:#ffd27a;font-size:13px;line-height:1.5}
+.admin-logout{border:1px solid #414768;background:#11162c;color:#fff;border-radius:22px;padding:10px 17px;cursor:pointer}
+@media(max-width:850px){.admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-layout{grid-template-columns:1fr}.admin-side{display:flex;overflow:auto;gap:5px;padding:8px}.admin-side button{white-space:nowrap;width:auto}.admin-main{padding:16px}}
+@media(max-width:480px){.admin-grid,.admin-actions{grid-template-columns:1fr}.admin-top{padding:0 14px}.admin-title{font-size:19px}}
+\n@media(max-width:1100px){.videos{grid-template-columns:repeat(3,minmax(0,1fr))}.brand{min-width:190px}.topbar{gap:14px;padding:0 16px}}
 @media(max-width:760px){.topbar{height:auto;min-height:66px;flex-wrap:wrap;padding:12px}.brand{min-width:0;flex:1;font-size:22px}.brand .play{width:36px;height:36px}.search{order:3;flex-basis:100%;max-width:none}.top-actions .upload{display:none}.layout{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line);padding:8px 10px}.nav{display:flex;overflow:auto;gap:4px}.nav a{white-space:nowrap;padding:10px 12px}.nav hr,.earnbox{display:none}main{padding:14px}.hero{padding:25px 22px;min-height:230px}.hero:after{right:2%;font-size:110px}.hero p{max-width:80%}.videos{grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 11px}}
 @media(max-width:430px){.videos{grid-template-columns:1fr}.hero h1{font-size:34px}.hero .tag{font-size:17px}.hero p{max-width:100%}.hero:after{opacity:.4}}
 </style>
@@ -47,6 +72,41 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
     <div class="auth-switch"><span id="switchText">New to TS WORLD?</span> <button id="switchMode" type="button">Create account</button></div>
   </div>
 </section>
+
+<div id="adminScreen" class="admin-shell hidden">
+<header class="admin-top"><div class="admin-title">TS <span>WORLD</span> <small style="font-size:11px;color:#a6abc5;letter-spacing:1px">ADMIN CONTROL PANEL</small></div><div><span id="adminEmail" style="font-size:12px;color:#c7c9dc;margin-right:12px"></span><button class="admin-logout" onclick="logout()">Logout</button></div></header>
+<div class="admin-layout">
+<aside class="admin-side">
+<button class="active" data-admin-tab="overview" onclick="openAdminTab('overview',this)">▦ Overview</button>
+<button data-admin-tab="videos" onclick="openAdminTab('videos',this)">▶ Video Management</button>
+<button data-admin-tab="users" onclick="openAdminTab('users',this)">♙ Users</button>
+<button data-admin-tab="rewards" onclick="openAdminTab('rewards',this)">🪙 Reward Rules</button>
+<button data-admin-tab="withdrawals" onclick="openAdminTab('withdrawals',this)">₹ Withdrawals</button>
+<button data-admin-tab="settings" onclick="openAdminTab('settings',this)">⚙ Settings</button>
+</aside>
+<main class="admin-main">
+<section id="adminOverview" class="admin-tab">
+<div class="admin-heading"><div><h1>Admin Dashboard</h1><p>Full administrative view of TS WORLD</p></div></div>
+<div class="admin-grid">
+<div class="admin-card"><small>Total registered users</small><strong id="adminUserCount">—</strong></div>
+<div class="admin-card"><small>Reward rules</small><strong id="adminRuleCount">—</strong></div>
+<div class="admin-card"><small>Videos</small><strong id="adminVideoCount">—</strong></div>
+<div class="admin-card"><small>Withdrawal requests</small><strong id="adminWithdrawalCount">—</strong></div>
+</div>
+<div class="admin-panel"><h2>Admin Controls</h2><div class="admin-actions">
+<button class="admin-action" onclick="openAdminTab('videos')"><b>▶ Manage Videos</b><span>Review and manage platform videos</span></button>
+<button class="admin-action" onclick="openAdminTab('users')"><b>♙ Manage Users</b><span>View registered accounts and roles</span></button>
+<button class="admin-action" onclick="openAdminTab('rewards')"><b>🪙 Set Coin Rewards</b><span>Control rewards for video duration</span></button>
+<button class="admin-action" onclick="openAdminTab('withdrawals')"><b>₹ Withdrawal Requests</b><span>Review payment requests and status</span></button>
+<button class="admin-action" onclick="openAdminTab('settings')"><b>⚙ Platform Settings</b><span>Admin-only platform configuration</span></button>
+</div></div>
+</section>
+<section id="adminVideos" class="admin-tab hidden"><div class="admin-heading"><div><h1>Video Management</h1><p>Admin video controls</p></div></div><div class="admin-panel"><p class="admin-note" id="videoAdminMessage">Video data table is not connected yet. The admin screen is separate from the user dashboard.</p></div></section>
+<section id="adminUsers" class="admin-tab hidden"><div class="admin-heading"><div><h1>User Management</h1><p>Registered TS WORLD accounts</p></div></div><div class="admin-panel"><table class="admin-table"><thead><tr><th>Email</th><th>Role</th><th>User ID</th></tr></thead><tbody id="adminUsersBody"><tr><td colspan="3">Loading users…</td></tr></tbody></table></div></section>
+<section id="adminRewards" class="admin-tab hidden"><div class="admin-heading"><div><h1>Reward Rules</h1><p>Coin rewards configuration</p></div></div><div class="admin-panel"><p class="admin-note">Reward rules table exists in your Supabase project. Its exact column structure must be checked before safely enabling add/edit controls.</p><div id="adminRulesData">Loading reward rules…</div></div></section>
+<section id="adminWithdrawals" class="admin-tab hidden"><div class="admin-heading"><div><h1>Withdrawal Requests</h1><p>Review user payout requests</p></div></div><div class="admin-panel"><p class="admin-note">Withdrawal request storage and payment status table are not connected yet.</p></div></section>
+<section id="adminSettings" class="admin-tab hidden"><div class="admin-heading"><div><h1>Platform Settings</h1><p>Admin-only settings</p></div></div><div class="admin-panel"><p>Signed in as administrator: <b id="adminSettingsEmail"></b></p><p class="admin-note">Only the account whose role is <b>admin</b> in public.profiles should see this dashboard.</p></div></section>
+</main></div></div>
 
 <div id="appScreen" class="hidden">
 <header class="topbar">
@@ -119,14 +179,24 @@ $('forgotButton').addEventListener('click',()=>setMode('forgot'));
 async function showApp(user){
   let role = 'user';
   const {data:profile,error} = await supabaseClient.from('profiles').select('role').eq('user_id',user.id).maybeSingle();
-  if(profile && profile.role) role = profile.role;
+  if(profile && profile.role) role = String(profile.role).toLowerCase();
   else if(!error){
     await supabaseClient.from('profiles').insert({user_id:user.id,email:user.email,role:'user'});
   }
   $('authScreen').classList.add('hidden');
-  $('appScreen').classList.remove('hidden');
-  $('userLabel').textContent = (user.email || 'User') + (role === 'admin' ? ' • ADMIN' : '');
   document.body.dataset.role = role;
+  if(role === 'admin'){
+    $('appScreen').classList.add('hidden');
+    $('adminScreen').classList.remove('hidden');
+    $('adminEmail').textContent = user.email || '';
+    $('adminSettingsEmail').textContent = user.email || '';
+    openAdminTab('overview',document.querySelector('[data-admin-tab="overview"]'));
+    loadAdminOverview();
+  }else{
+    $('adminScreen').classList.add('hidden');
+    $('appScreen').classList.remove('hidden');
+    $('userLabel').textContent = user.email || 'User';
+  }
 }
 async function logout(){
   const {error}=await supabaseClient.auth.signOut({scope:'local'});
@@ -203,6 +273,43 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
     setMode('login');
   }
 });
+function openAdminTab(tab,button){
+  document.querySelectorAll('.admin-tab').forEach(el=>el.classList.add('hidden'));
+  const target=$('admin'+tab.charAt(0).toUpperCase()+tab.slice(1));
+  if(target) target.classList.remove('hidden');
+  document.querySelectorAll('.admin-side button').forEach(el=>el.classList.remove('active'));
+  if(button) button.classList.add('active');
+  if(tab==='users') loadAdminUsers();
+  if(tab==='rewards') loadAdminRules();
+}
+async function loadAdminOverview(){
+  const [users,rules,videos,withdrawals]=await Promise.all([
+    supabaseClient.from('profiles').select('*',{count:'exact',head:true}),
+    supabaseClient.from('reward_rules').select('*',{count:'exact',head:true}),
+    supabaseClient.from('videos').select('*',{count:'exact',head:true}),
+    supabaseClient.from('withdrawal_requests').select('*',{count:'exact',head:true})
+  ]);
+  $('adminUserCount').textContent=users.count ?? '—';
+  $('adminRuleCount').textContent=rules.count ?? '—';
+  $('adminVideoCount').textContent=videos.error?'Not connected':(videos.count ?? 0);
+  $('adminWithdrawalCount').textContent=withdrawals.error?'Not connected':(withdrawals.count ?? 0);
+}
+async function loadAdminUsers(){
+  const body=$('adminUsersBody'); body.innerHTML='<tr><td colspan="3">Loading…</td></tr>';
+  const {data,error}=await supabaseClient.from('profiles').select('user_id,email,role').order('created_at',{ascending:false}).limit(100);
+  if(error){body.innerHTML='<tr><td colspan="3">Could not load users: '+escapeHtml(error.message)+'</td></tr>';return;}
+  body.innerHTML=data.length?data.map(u=>'<tr><td>'+escapeHtml(u.email||'')+'</td><td>'+escapeHtml(u.role||'user')+'</td><td>'+escapeHtml(u.user_id||'')+'</td></tr>').join(''):'<tr><td colspan="3">No users found</td></tr>';
+}
+async function loadAdminRules(){
+  const box=$('adminRulesData'); box.textContent='Loading reward rules…';
+  const {data,error}=await supabaseClient.from('reward_rules').select('*').limit(100);
+  if(error){box.textContent='Could not load reward rules: '+error.message;return;}
+  if(!data.length){box.textContent='No reward rules added yet.';return;}
+  box.innerHTML='<pre style="white-space:pre-wrap;overflow-wrap:anywhere;color:#e7e8f5">'+escapeHtml(JSON.stringify(data,null,2))+'</pre>';
+}
+function escapeHtml(value){
+ return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
 function filterCategory(category,button){
  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));button.classList.add('active');
  document.querySelectorAll('.video').forEach(card=>card.style.display=(category==='All'||card.dataset.category===category)?'block':'none');
