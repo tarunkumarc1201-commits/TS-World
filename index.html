@@ -257,6 +257,7 @@ async function showApp(user){
   }else{
     $('appScreen').classList.remove('hidden');
     $('userLabel').textContent = user.email || 'User';
+    await loadUserVideos();
   }
 }
 async function logout(){
@@ -446,13 +447,41 @@ $('adminVideoUploadForm').addEventListener('submit',async e=>{
  finally{btn.disabled=false;btn.textContent='⬆ Upload Video';}
 });
 
+async function loadUserVideos(){
+ const grid=$('videoGrid');
+ if(!grid) return;
+ grid.innerHTML='<div class="admin-note">Loading videos…</div>';
+ const {data,error}=await supabaseClient.from('videos').select('id,title,description,category,video_url,storage_path,status,created_at').eq('status','published').order('created_at',{ascending:false}).limit(100);
+ if(error){
+   grid.innerHTML='<div class="admin-note">Videos could not be loaded: '+escapeHtml(error.message)+'. Please check the videos table SELECT permission (RLS) in Supabase.</div>';
+   return;
+ }
+ if(!data || data.length===0){
+   grid.innerHTML='<div class="admin-note">No published videos available yet.</div>';
+   return;
+ }
+ grid.innerHTML=data.map(v=>{
+   let url=v.video_url||'';
+   if(!url && v.storage_path){url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';}
+   const safeUrl=escapeHtml(url);
+   const title=escapeHtml(v.title||'Untitled video');
+   const category=escapeHtml(v.category||'General');
+   const description=escapeHtml(v.description||'');
+   const date=v.created_at?new Date(v.created_at).toLocaleDateString():'';
+   return '<article class="video real-video-card" data-category="'+category+'">'+
+     (url?'<video class="real-video-player" controls preload="metadata" playsinline src="'+safeUrl+'">Your browser does not support video playback.</video>':'<div class="real-video-missing">Video file URL is missing.</div>')+
+     '<h3>'+title+'</h3><p class="meta"><span class="channel">TS WORLD</span><br>'+category+(date?' • '+escapeHtml(date):'')+'</p>'+
+     (description?'<p class="real-video-description">'+description+'</p>':'')+
+     '</article>';
+ }).join('');
+}
 function filterCategory(category,button){
  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));button.classList.add('active');
- document.querySelectorAll('.video').forEach(card=>card.style.display=(category==='All'||card.dataset.category===category)?'block':'none');
+ document.querySelectorAll('#videoGrid .video').forEach(card=>card.style.display=(category==='All'||card.dataset.category===category)?'block':'none');
 }
 function searchVideos(){
  const q=$('searchInput').value.toLowerCase().trim();
- document.querySelectorAll('.video').forEach(card=>card.style.display=card.innerText.toLowerCase().includes(q)?'block':'none');
+ document.querySelectorAll('#videoGrid .video').forEach(card=>card.style.display=card.innerText.toLowerCase().includes(q)?'block':'none');
 }
 $('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchVideos()});
 initAuth();
