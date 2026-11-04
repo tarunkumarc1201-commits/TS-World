@@ -123,7 +123,7 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 </div>
 <div class="admin-panel"><h2>Uploaded Videos</h2><div id="adminVideosList" class="admin-note">Open this tab to load videos.</div></div>
 </section>
-<section id="adminUsers" class="admin-tab hidden"><div class="admin-heading"><div><h1>User Management</h1><p>Registered TS WORLD accounts</p></div></div><div class="admin-panel"><table class="admin-table"><thead><tr><th>Email</th><th>Role</th><th>User ID</th></tr></thead><tbody id="adminUsersBody"><tr><td colspan="3">Loading users…</td></tr></tbody></table></div></section>
+<section id="adminUsers" class="admin-tab hidden"><div class="admin-heading"><div><h1>User Management</h1><p>Approve new registrations before users can access TS WORLD</p></div><button class="admin-action" type="button" onclick="loadAdminUsers()">↻ Refresh</button></div><div class="admin-panel"><div class="admin-note" style="margin-bottom:14px">Pending users must be approved by the administrator. Rejected users cannot enter the platform.</div><table class="admin-table"><thead><tr><th>Email</th><th>Role</th><th>Approval Status</th><th>Action</th></tr></thead><tbody id="adminUsersBody"><tr><td colspan="4">Loading users…</td></tr></tbody></table></div></section>
 <section id="adminRewards" class="admin-tab hidden"><div class="admin-heading"><div><h1>Reward Rules</h1><p>Coin rewards configuration</p></div></div><div class="admin-panel"><p class="admin-note">Reward rules table exists in your Supabase project. Its exact column structure must be checked before safely enabling add/edit controls.</p><div id="adminRulesData">Loading reward rules…</div></div></section>
 <section id="adminWithdrawals" class="admin-tab hidden"><div class="admin-heading"><div><h1>Withdrawal Requests</h1><p>Review user payout requests</p></div></div><div class="admin-panel"><p class="admin-note">Withdrawal request storage and payment status table are not connected yet.</p></div></section>
 <section id="adminSettings" class="admin-tab hidden"><div class="admin-heading"><div><h1>Platform Settings</h1><p>Admin-only settings</p></div></div><div class="admin-panel"><p>Signed in as administrator: <b id="adminSettingsEmail"></b></p><p class="admin-note">Only the account whose role is <b>admin</b> in public.profiles should see this dashboard.</p></div></section>
@@ -207,17 +207,31 @@ async function showApp(user){
   let role = '';
   let profileError = null;
   const {data:profile,error} = await supabaseClient
-    .from('profiles').select('role').eq('user_id',user.id).maybeSingle();
+    .from('profiles').select('role,approval_status').eq('user_id',user.id).maybeSingle();
   profileError = error;
   if(profile && profile.role) role = String(profile.role).trim().toLowerCase();
 
-  // The profiles SELECT policy may block the role lookup. For the named owner
-  // account, still open the admin interface and show the database warning there.
+  // Only the owner account or a database-admin profile may enter the admin panel.
   const isAdmin = role === 'admin' || ADMIN_EMAILS.includes(email);
   $('authScreen').classList.add('hidden');
   $('appScreen').classList.add('hidden');
   $('adminScreen').classList.add('hidden');
   document.body.dataset.role = isAdmin ? 'admin' : (role || 'user');
+  if(!isAdmin){
+    if(profileError || !profile){
+      $('authScreen').classList.remove('hidden');
+      $('authMessage').style.color = '#ffb5b5';
+      $('authMessage').textContent = profileError ? 'Could not verify account approval. Please try again later.' : 'Your registration is awaiting administrator approval.';
+      return;
+    }
+    const approval = String(profile.approval_status || 'pending').toLowerCase();
+    if(approval !== 'approved'){
+      $('authScreen').classList.remove('hidden');
+      $('authMessage').style.color = approval === 'rejected' ? '#ff9cae' : '#ffd27a';
+      $('authMessage').textContent = approval === 'rejected' ? 'Your registration was not approved. Please contact the administrator.' : 'Registration received. Your account is pending admin approval.';
+      return;
+    }
+  }
   if(isAdmin){
     $('adminScreen').classList.remove('hidden');
     $('adminEmail').textContent = user.email || '';
@@ -333,10 +347,23 @@ async function loadAdminOverview(){
   $('adminWithdrawalCount').textContent=withdrawals.error?'Not connected':(withdrawals.count ?? 0);
 }
 async function loadAdminUsers(){
-  const body=$('adminUsersBody'); body.innerHTML='<tr><td colspan="3">Loading…</td></tr>';
-  const {data,error}=await supabaseClient.from('profiles').select('user_id,email,role').order('created_at',{ascending:false}).limit(100);
-  if(error){body.innerHTML='<tr><td colspan="3">Could not load users: '+escapeHtml(error.message)+'</td></tr>';return;}
-  body.innerHTML=data.length?data.map(u=>'<tr><td>'+escapeHtml(u.email||'')+'</td><td>'+escapeHtml(u.role||'user')+'</td><td>'+escapeHtml(u.user_id||'')+'</td></tr>').join(''):'<tr><td colspan="3">No users found</td></tr>';
+  const body=$('adminUsersBody'); body.innerHTML='<tr><td colspan="4">Loading…</td></tr>';
+  const {data,error}=await supabaseClient.from('profiles').select('user_id,email,role,approval_status').order('created_at',{ascending:false}).limit(100);
+  if(error){body.innerHTML='<tr><td colspan="4">Could not load users: '+escapeHtml(error.message)+'</td></tr>';return;}
+  body.innerHTML=data.length?data.map(u=>{
+    const status=String(u.approval_status||'pending').toLowerCase();
+    const actions=status==='approved' ? '<button class="admin-action" style="padding:8px 12px" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'pending\')">Revoke</button> <button class="admin-action" style="padding:8px 12px" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'rejected\')">Reject</button>' : '<button class="admin-action" style="padding:8px 12px;background:#174b35" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'approved\')">Approve</button> <button class="admin-action" style="padding:8px 12px" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'rejected\')">Reject</button>';
+    return '<tr><td>'+escapeHtml(u.email||'')+'</td><td>'+escapeHtml(u.role||'user')+'</td><td>'+escapeHtml(status.toUpperCase())+'</td><td>'+actions+'</td></tr>';
+  }).join(''):'<tr><td colspan="4">No users found</td></tr>';
+}
+async function setUserApproval(userId,status){
+  if(!['approved','pending','rejected'].includes(status)) return;
+  const action=status==='approved'?'approve':status==='rejected'?'reject':'revoke access for';
+  if(!confirm('Are you sure you want to '+action+' this user?')) return;
+  const {error}=await supabaseClient.from('profiles').update({approval_status:status}).eq('user_id',userId);
+  if(error){alert('Could not update approval: '+error.message);return;}
+  await loadAdminUsers();
+  await loadAdminOverview();
 }
 async function loadAdminRules(){
   const box=$('adminRulesData'); box.textContent='Loading reward rules…';
