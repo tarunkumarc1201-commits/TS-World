@@ -123,7 +123,7 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 </div>
 <div class="admin-panel"><h2>Uploaded Videos</h2><div id="adminVideosList" class="admin-note">Open this tab to load videos.</div></div>
 </section>
-<section id="adminUsers" class="admin-tab hidden"><div class="admin-heading"><div><h1>User Management</h1><p>Approve new registrations before users can access TS WORLD</p></div><button class="admin-action" type="button" onclick="loadAdminUsers()">↻ Refresh</button></div><div class="admin-panel"><div class="admin-note" style="margin-bottom:14px">Pending users must be approved by the administrator. Rejected users cannot enter the platform.</div><table class="admin-table"><thead><tr><th>Email</th><th>Role</th><th>Approval Status</th><th>Action</th></tr></thead><tbody id="adminUsersBody"><tr><td colspan="4">Loading users…</td></tr></tbody></table></div></section>
+<section id="adminUsers" class="admin-tab hidden"><div class="admin-heading"><div><h1>User Management</h1><p>Approve new registrations before users can access TS WORLD</p></div><button class="admin-action" type="button" onclick="loadAdminUsers()">↻ Refresh</button></div><div class="admin-panel"><div class="admin-note" style="margin-bottom:14px">PENDING: waiting for approval • APPROVED: can access TS WORLD • REJECTED: denied • REVOKED: previously approved, access stopped. Use Refresh to reload registrations.</div><table class="admin-table"><thead><tr><th>Email</th><th>Role</th><th>Approval Status</th><th>Action</th></tr></thead><tbody id="adminUsersBody"><tr><td colspan="4">Loading users…</td></tr></tbody></table></div></section>
 <section id="adminRewards" class="admin-tab hidden"><div class="admin-heading"><div><h1>Reward Rules</h1><p>Coin rewards configuration</p></div></div><div class="admin-panel"><p class="admin-note">Reward rules table exists in your Supabase project. Its exact column structure must be checked before safely enabling add/edit controls.</p><div id="adminRulesData">Loading reward rules…</div></div></section>
 <section id="adminWithdrawals" class="admin-tab hidden"><div class="admin-heading"><div><h1>Withdrawal Requests</h1><p>Review user payout requests</p></div></div><div class="admin-panel"><p class="admin-note">Withdrawal request storage and payment status table are not connected yet.</p></div></section>
 <section id="adminSettings" class="admin-tab hidden"><div class="admin-heading"><div><h1>Platform Settings</h1><p>Admin-only settings</p></div></div><div class="admin-panel"><p>Signed in as administrator: <b id="adminSettingsEmail"></b></p><p class="admin-note">Only the account whose role is <b>admin</b> in public.profiles should see this dashboard.</p></div></section>
@@ -352,13 +352,16 @@ async function loadAdminUsers(){
   if(error){body.innerHTML='<tr><td colspan="4">Could not load users: '+escapeHtml(error.message)+'</td></tr>';return;}
   body.innerHTML=data.length?data.map(u=>{
     const status=String(u.approval_status||'pending').toLowerCase();
-    const actions=status==='approved' ? '<button class="admin-action" style="padding:8px 12px" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'pending\')">Revoke</button> <button class="admin-action" style="padding:8px 12px" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'rejected\')">Reject</button>' : '<button class="admin-action" style="padding:8px 12px;background:#174b35" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'approved\')">Approve</button> <button class="admin-action" style="padding:8px 12px" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'rejected\')">Reject</button>';
+    const approveBtn = status==='approved' ? '' : '<button class="admin-action" style="padding:8px 12px;background:#174b35" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'approved\')">Approve</button> ';
+    const rejectBtn = status==='rejected' ? '' : '<button class="admin-action" style="padding:8px 12px" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'rejected\')">Reject</button> ';
+    const revokeBtn = status==='approved' ? '<button class="admin-action" style="padding:8px 12px;background:#57321a" onclick="setUserApproval(\''+escapeHtml(u.user_id)+'\',\'revoked\')">Revoke</button>' : '';
+    const actions = approveBtn + rejectBtn + revokeBtn;
     return '<tr><td>'+escapeHtml(u.email||'')+'</td><td>'+escapeHtml(u.role||'user')+'</td><td>'+escapeHtml(status.toUpperCase())+'</td><td>'+actions+'</td></tr>';
   }).join(''):'<tr><td colspan="4">No users found</td></tr>';
 }
 async function setUserApproval(userId,status){
-  if(!['approved','pending','rejected'].includes(status)) return;
-  const action=status==='approved'?'approve':status==='rejected'?'reject':'revoke access for';
+  if(!['approved','pending','rejected','revoked'].includes(status)) return;
+  const action=status==='approved'?'approve':status==='rejected'?'reject':status==='revoked'?'revoke access for':'return to pending status for';
   if(!confirm('Are you sure you want to '+action+' this user?')) return;
   const {error}=await supabaseClient.from('profiles').update({approval_status:status}).eq('user_id',userId);
   if(error){alert('Could not update approval: '+error.message);return;}
