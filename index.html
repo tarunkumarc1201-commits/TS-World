@@ -214,6 +214,44 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
  .mobile-bottom-nav button.active{color:var(--cyan);font-weight:800}
  .channel-action-grid{grid-template-columns:1fr 1fr}
 }
+
+/* Final reference style: dark navy + cyan */
+#appScreen{background:#03101d!important;color:#f4f8ff!important}
+#appScreen .topbar{background:#03101d!important;color:#fff!important;border-bottom:1px solid #18364d!important}
+#appScreen .mobile-menu{display:none;background:transparent;border:0;color:#fff;font-size:26px}
+#appScreen .hero{background:linear-gradient(115deg,#05233b,#064f62 62%,#00a9a7)!important;color:#fff!important;border:1px solid #087e91!important}
+#appScreen .hero strong,#appScreen .section-title a{color:#08e5d2!important}
+#appScreen .chip{background:#0b2035!important;color:#e7f4ff!important;border:1px solid #35516a!important}
+#appScreen .chip.active{background:#08e5d2!important;color:#00202a!important}
+#appScreen .video{background:linear-gradient(145deg,#102943,#08192b)!important;border:1px solid #294965!important;color:#fff!important}
+#appScreen .video h3,#appScreen .section-title h2{color:#fff!important}
+#appScreen .meta{color:#a9bfd0!important}
+#appScreen .channel-balance-card,#appScreen .wallet-large-card{background:linear-gradient(120deg,#063d4a,#0b2438)!important;border:1px solid #078b9a!important}
+#appScreen .wallet-balance{color:#ffd84a!important}
+#appScreen .wallet-rupees{color:#08e5d2!important}
+#appScreen .channel-action,#appScreen .withdrawal-card,#appScreen .wallet-info-card{background:#0b2035!important;color:#fff!important;border:1px solid #294965!important}
+#appScreen .channel-action.featured,#appScreen .wallet-primary{background:linear-gradient(100deg,#00d9c5,#00afc5)!important;color:#00232a!important}
+#appScreen .withdrawal-card input{background:#061727!important;color:#fff!important;border:1px solid #35516a!important}
+.mobile-bottom-nav{display:none}
+@media(max-width:760px){
+ #appScreen .topbar{height:68px;padding:7px 12px;display:flex;align-items:center;gap:8px}
+ #appScreen .mobile-menu{display:block}
+ #appScreen .brand{font-size:19px;min-width:0}
+ #appScreen .brand small{font-size:8px}
+ #appScreen .search{display:none}
+ #appScreen .top-actions{margin-left:auto;gap:7px}
+ #appScreen .top-actions .user-pill,#appScreen .top-actions .upload,#appScreen .top-actions .login{display:none!important}
+ #appScreen .layout{display:block!important}
+ #appScreen .layout>aside{display:none!important}
+ #appScreen .layout>aside.mobile-open{display:block!important;position:fixed;z-index:100;top:68px;left:0;width:80%;max-width:280px;height:calc(100vh - 68px);overflow:auto}
+ #appScreen main{padding:12px 12px 92px!important}
+ #appScreen .hero{padding:20px 16px!important;margin:8px 0 14px!important}
+ #appScreen .videos{grid-template-columns:1fr!important;gap:14px!important}
+ .mobile-bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:120;bottom:0;left:0;right:0;padding:7px 4px calc(7px + env(safe-area-inset-bottom));background:#061727f5;border-top:1px solid #254461}
+ .mobile-bottom-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:0;color:#d9e8f4;font-size:11px;padding:5px 1px}
+ .mobile-bottom-nav button span{font-size:22px;line-height:1.1}
+ .mobile-bottom-nav button.active{color:#08e5d2;font-weight:800}
+}
 </style>
 </head>
 <body>
@@ -287,6 +325,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 
 <div id="appScreen" class="hidden">
 <header class="topbar">
+  <button class="mobile-menu" type="button" onclick="document.querySelector('#appScreen .layout>aside').classList.toggle('mobile-open')" aria-label="Menu">☰</button>
   <div class="brand"><div class="play">▶</div><div>TS <b>WORLD</b><small>WATCH • UPLOAD • EARN</small></div></div>
   <div class="search"><input id="searchInput" placeholder="Search videos, channels, or topics..."><button onclick="searchVideos()">⌕</button></div>
   <div class="top-actions"><button class="header-icon" type="button" aria-label="Notifications">♧</button><button class="header-icon profile-icon" type="button" onclick="showUserPage('channel')" aria-label="My Account">●</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
@@ -340,7 +379,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 <nav class="mobile-bottom-nav" aria-label="Main navigation">
  <button class="active" onclick="showUserPage('home')"><span>⌂</span>Home</button>
  <button onclick="showUserPage('home')"><span>♨</span>Trending</button>
- <button onclick="alert('Video upload will be connected in the next step.')"><span>＋</span>Upload</button>
+ <button onclick="alert('Upload is available from the Upload Video option.')"><span>＋</span>Upload</button>
  <button onclick="showUserPage('home')"><span>▣</span>Subscriptions</button>
  <button onclick="showUserPage('channel')"><span>♙</span>My Account</button>
 </nav></div>
@@ -712,7 +751,7 @@ async function loadUserVideos(){
  });
 }
 function showUserPage(page){
- const homeNodes=[document.querySelector('#appScreen .hero'),document.querySelector('#appScreen .categories'),document.querySelector('#appScreen .section-title'),$('videoGrid'),document.querySelector('#appScreen .hero')];
+ const homeNodes=[document.querySelector('#appScreen .hero'),document.querySelector('#appScreen .categories'),document.querySelector('#appScreen .section-title'),$('videoGrid')];
  const channel=$('userChannelPage'),history=$('userHistoryPage'),wallet=$('userWalletPage'),withdraw=$('userWithdrawalPage');
  homeNodes.forEach(node=>{if(node)node.classList.toggle('hidden',page!=='home');});
  if(channel)channel.classList.toggle('hidden',page!=='channel');
