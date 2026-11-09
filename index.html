@@ -172,6 +172,16 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 </nav><div class="earnbox"><div class="coin">🪙</div><h3>Watch & Earn Coins</h3><p>Watch videos, collect coins and request your rewards.</p><button onclick="alert('Wallet and rewards will be activated in the next step.')">Start Earning ›</button></div></aside>
 <main>
 <section class="hero"><h1>TS <strong>WORLD</strong></h1><div class="tag">▶ Watch&nbsp; • &nbsp;Upload&nbsp; • &nbsp;Earn</div><p>A video platform for creators and viewers. Discover videos, share your content and earn rewards.</p><div class="hero-buttons"><button class="primary" onclick="document.querySelector('.videos').scrollIntoView({behavior:'smooth'})">▶ Watch Videos</button><button class="secondary" onclick="alert('Video upload will be connected in the next step.')">＋ Upload Video</button></div></section>
+<section id="userWalletPanel" class="admin-panel" style="margin:12px 12px 18px">
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+<div><div style="color:#a6abc5;font-size:13px">My TS WORLD Wallet</div><div style="font-size:28px;font-weight:900;color:#ffd34d"><span id="walletCoins">0</span> Coins</div><div style="color:#a6abc5;font-size:13px">Amount: ₹<span id="walletAmount">0.00</span> (100 Coins = ₹1)</div></div>
+<button class="admin-action" type="button" onclick="loadUserWallet()">↻ Refresh Wallet</button></div>
+<div class="admin-panel" style="margin-top:14px"><h2>Request Withdrawal</h2><div style="display:grid;gap:9px;max-width:440px">
+<label for="withdrawCoins">Coins to withdraw</label><input id="withdrawCoins" type="number" min="1" step="1" placeholder="Enter coins" style="padding:12px;border:1px solid #414768;border-radius:10px;background:#090d1d;color:white">
+<div class="meta">Estimated amount: ₹<span id="withdrawAmountPreview">0.00</span></div>
+<label for="withdrawUpi">UPI ID</label><input id="withdrawUpi" type="text" maxlength="120" placeholder="example@upi" style="padding:12px;border:1px solid #414768;border-radius:10px;background:#090d1d;color:white">
+<button class="admin-action" id="withdrawRequestBtn" type="button" onclick="submitWithdrawalRequest()">Submit Withdrawal Request</button><div id="withdrawMessage" class="admin-note" role="status"></div></div></div>
+<div class="admin-panel" style="margin-top:14px"><h2>My Withdrawal Requests</h2><div id="myWithdrawalList" class="meta">Loading…</div></div></section>
 <div class="categories"><button class="chip active" onclick="filterCategory('All',this)">▦ All</button><button class="chip" onclick="filterCategory('Education',this)">🎓 Education</button><button class="chip" onclick="filterCategory('Entertainment',this)">🎬 Entertainment</button><button class="chip" onclick="filterCategory('Technology',this)">💻 Technology</button><button class="chip" onclick="filterCategory('Music',this)">♫ Music</button><button class="chip" onclick="filterCategory('Sports',this)">🏆 Sports</button><button class="chip" onclick="filterCategory('Travel',this)">✈ Travel</button></div>
 <div class="section-title"><h2>▶ Recommended for You</h2><a href="#">View All ›</a></div>
 <section class="videos" id="videoGrid">
@@ -275,7 +285,7 @@ async function showApp(user){
   }else{
     $('appScreen').classList.remove('hidden');
     $('userLabel').textContent = user.email || 'User';
-    await loadUserVideos();
+    await loadUserVideos();\n    await loadUserWallet();
   }
 }
 async function logout(){
@@ -514,32 +524,54 @@ $('adminVideoUploadForm').addEventListener('submit',async e=>{
 });
 
 async function loadUserVideos(){
- const grid=$('videoGrid');
- if(!grid) return;
+ const grid=$('videoGrid'); if(!grid)return;
  grid.innerHTML='<div class="admin-note">Loading videos…</div>';
- const {data,error}=await supabaseClient.from('videos').select('id,title,description,category,video_url,storage_path,status,created_at').eq('status','published').order('created_at',{ascending:false}).limit(100);
- if(error){
-   grid.innerHTML='<div class="admin-note">Videos could not be loaded: '+escapeHtml(error.message)+'. Please check the videos table SELECT permission (RLS) in Supabase.</div>';
-   return;
- }
- if(!data || data.length===0){
-   grid.innerHTML='<div class="admin-note">No published videos available yet.</div>';
-   return;
- }
+ const {data,error}=await supabaseClient.from('videos').select('id,title,description,category,video_url,storage_path,status,created_at,reward_coins').eq('status','published').order('created_at',{ascending:false}).limit(100);
+ if(error){grid.innerHTML='<div class="admin-note">Videos could not be loaded: '+escapeHtml(error.message)+'</div>';return;}
+ if(!data?.length){grid.innerHTML='<div class="admin-note">No published videos available yet.</div>';return;}
  grid.innerHTML=data.map(v=>{
-   let url=v.video_url||'';
-   if(!url && v.storage_path){url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';}
-   const safeUrl=escapeHtml(url);
-   const title=escapeHtml(v.title||'Untitled video');
-   const category=escapeHtml(v.category||'General');
-   const description=escapeHtml(v.description||'');
-   const date=v.created_at?new Date(v.created_at).toLocaleDateString():'';
-   return '<article class="video real-video-card" data-category="'+category+'">'+
-     (url?'<video class="real-video-player" controls preload="metadata" playsinline src="'+safeUrl+'">Your browser does not support video playback.</video>':'<div class="real-video-missing">Video file URL is missing.</div>')+
-     '<h3>'+title+'</h3><p class="meta"><span class="channel">TS WORLD</span><br>'+category+(date?' • '+escapeHtml(date):'')+'</p>'+
-     (description?'<p class="real-video-description">'+description+'</p>':'')+
-     '</article>';
+  let url=v.video_url||'';if(!url&&v.storage_path)url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';
+  const coins=Math.max(0,Number(v.reward_coins)||0);
+  return '<article class="video real-video-card" data-category="'+escapeHtml(v.category||'General')+'">'+
+   (url?'<video class="real-video-player" controls preload="metadata" playsinline data-reward-video="'+escapeHtml(v.id)+'" src="'+escapeHtml(url)+'"></video>':'<div class="real-video-missing">Video file URL is missing.</div>')+
+   '<h3>'+escapeHtml(v.title||'Untitled video')+'</h3><p class="meta"><span class="channel">TS WORLD</span><br>'+escapeHtml(v.category||'General')+(v.created_at?' • '+escapeHtml(new Date(v.created_at).toLocaleDateString()):'')+'</p>'+
+   '<div class="video-reward-note" style="margin:8px 12px;color:#ffd34d;font-weight:700">🪙 Watch 90% and earn '+coins+' Coins (₹'+(coins/100).toFixed(2)+')</div>'+
+   (v.description?'<p class="real-video-description">'+escapeHtml(v.description)+'</p>':'')+'</article>';
  }).join('');
+ grid.querySelectorAll('video[data-reward-video]').forEach(video=>{
+  let submitted=false;
+  video.addEventListener('timeupdate',async()=>{
+   if(submitted||!video.duration||video.currentTime/video.duration<0.9)return;
+   submitted=true;video.pause();
+   const note=video.closest('.real-video-card').querySelector('.video-reward-note');
+   note.textContent='Checking reward…';
+   const {data,error}=await supabaseClient.rpc('tsw_claim_video_reward',{p_video_id:video.dataset.rewardVideo});
+   if(error){submitted=false;note.textContent='Reward error: '+error.message;return;}
+   note.textContent=data?.already_claimed?'Reward already claimed for this video.':'🪙 '+(data?.coins_awarded||0)+' Coins credited!';
+   await loadUserWallet();
+  });
+ });
+}
+async function loadUserWallet(){
+ if(!currentSignedInUser)return;
+ const {data,error}=await supabaseClient.from('tsw_coin_transactions').select('coin_amount').eq('user_id',currentSignedInUser.id);
+ if(error){$('walletCoins').textContent='—';$('walletAmount').textContent='—';$('withdrawMessage').textContent='Wallet error: '+error.message;return;}
+ const balance=(data||[]).reduce((sum,x)=>sum+Number(x.coin_amount||0),0);
+ $('walletCoins').textContent=balance;$('walletAmount').textContent=(balance/100).toFixed(2);
+ const {data:req,error:reqErr}=await supabaseClient.from('tsw_withdrawal_requests').select('coins,amount_inr,upi_id,status,created_at').eq('user_id',currentSignedInUser.id).order('created_at',{ascending:false}).limit(30);
+ $('myWithdrawalList').innerHTML=reqErr?'Could not load requests: '+escapeHtml(reqErr.message):(req?.length?req.map(r=>'<div class="video-row">₹'+Number(r.amount_inr).toFixed(2)+' • '+r.coins+' Coins • '+escapeHtml(r.status)+' • '+escapeHtml(new Date(r.created_at).toLocaleString())+'</div>').join(''):'No withdrawal requests yet.');
+}
+$('withdrawCoins')?.addEventListener('input',()=>{$('withdrawAmountPreview').textContent=(Math.max(0,Number($('withdrawCoins').value)||0)/100).toFixed(2);});
+async function submitWithdrawalRequest(){
+ const coins=Number($('withdrawCoins').value),upi=$('withdrawUpi').value.trim(),btn=$('withdrawRequestBtn'),msg=$('withdrawMessage');
+ if(!Number.isSafeInteger(coins)||coins<1){msg.textContent='Enter valid Coins.';return;}
+ if(!/^[A-Za-z0-9._-]{2,}@[A-Za-z]{2,}$/.test(upi)){msg.textContent='Enter valid UPI ID.';return;}
+ btn.disabled=true;msg.textContent='Submitting…';
+ const {data,error}=await supabaseClient.rpc('tsw_request_withdrawal',{p_coins:coins,p_upi_id:upi});
+ btn.disabled=false;
+ if(error){msg.textContent='Request failed: '+error.message;return;}
+ msg.textContent='Withdrawal request submitted. Status: Pending.';
+ $('withdrawCoins').value='';$('withdrawAmountPreview').textContent='0.00';await loadUserWallet();
 }
 function filterCategory(category,button){
  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));button.classList.add('active');
