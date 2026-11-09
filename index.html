@@ -421,18 +421,43 @@ async function loadAdminVideos(){
  const {data,error}=await supabaseClient.from('videos').select('*').order('created_at',{ascending:false}).limit(100);
  if(error){box.textContent='Could not load videos: '+error.message;return;}
  if(!data?.length){box.textContent='No videos uploaded yet.';return;}
- box.innerHTML=data.map(v=>{
-   const title=escapeHtml(v.title||v.name||'Untitled video');
+ box.innerHTML='';
+ for(const v of data){
+   const article=document.createElement('article');
+   article.className='video-row';
+   article.style.cssText='display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;align-items:start';
+   const info=document.createElement('div');
+   const heading=document.createElement('b');heading.textContent=v.title||v.name||'Untitled video';heading.style.fontSize='16px';
+   const meta=document.createElement('p');meta.className='meta';meta.textContent=(v.category||'')+' • '+(v.created_at?new Date(v.created_at).toLocaleString():'');
+   const desc=document.createElement('p');desc.textContent=v.description||'';
+   const label=document.createElement('label');label.textContent='🪙 Reward Coins (editable)';label.style.cssText='display:block;margin:12px 0 6px;font-weight:700';
+   const field=document.createElement('input');field.type='number';field.min='0';field.max='1000000';field.step='1';field.value=String(v.reward_coins??0);
+   field.style.cssText='max-width:180px;width:100%;padding:10px;background:#090d1d;border:1px solid #414768;color:white;border-radius:9px';
+   const preview=document.createElement('div');preview.className='meta';
+   const updatePreview=()=>{const n=Number(field.value);preview.textContent=Number.isSafeInteger(n)&&n>=0?'Value: ₹'+(n/100).toFixed(2):'Enter a valid coin amount';};
+   field.addEventListener('input',updatePreview);updatePreview();
+   const save=document.createElement('button');save.type='button';save.className='admin-action';save.style.cssText='display:block;margin-top:10px;padding:10px 16px;background:#174b35';
+   save.textContent='Save Coins';
+   const status=document.createElement('div');status.className='admin-note';status.setAttribute('role','status');
+   save.addEventListener('click',async()=>{
+     const n=Number(field.value);
+     if(!Number.isSafeInteger(n)||n<0||n>1000000){status.textContent='Enter whole Coins between 0 and 1,000,000.';return;}
+     if(!currentSignedInUser){status.textContent='Admin session expired. Login again.';return;}
+     save.disabled=true;status.textContent='Saving…';
+     const {data:updated,error:saveError}=await supabaseClient.from('videos').update({reward_coins:n}).eq('id',v.id).select('id,reward_coins').maybeSingle();
+     save.disabled=false;
+     status.textContent=saveError?'Could not save Coins: '+saveError.message:!updated?'No video updated. Check Supabase UPDATE/SELECT permissions.':'Saved! '+n+' Coins for this video.';
+   });
+   info.append(heading,meta,desc,label,field,preview,save,status);
    let url=v.video_url||v.url||v.public_url||'';
-   if(!url && v.storage_path){url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';}
-   const safeUrl=escapeHtml(url);
-   const date=v.created_at?new Date(v.created_at).toLocaleString():'';
-   return '<article class="video-row" style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,1fr);gap:16px;align-items:start">'+
-     '<div><b style="font-size:16px">'+title+'</b><div style="margin:7px 0;color:#aeb4d0;font-size:13px">'+escapeHtml(v.category||'')+(date?' • '+escapeHtml(date):'')+'</div><p style="margin:6px 0 12px;color:#d4d7e8">'+escapeHtml(v.description||'')+'</p>'+(url?'<a href="'+safeUrl+'" target="_blank" rel="noopener">Open video in new tab</a>':'<span>Video URL is missing for this record.</span>')+'</div>'+
-     (url?'<video controls preload="metadata" playsinline style="width:100%;max-height:260px;background:#000;border-radius:10px"><source src="'+safeUrl+'">Your browser does not support video playback.</video>':'<div class="admin-note">Cannot play: no video URL.</div>')+
-     '</article>';
- }).join('');
+   if(!url&&v.storage_path)url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';
+   const media=document.createElement('div');
+   if(url){const video=document.createElement('video');video.controls=true;video.preload='metadata';video.playsInline=true;video.src=url;video.style.cssText='width:100%;max-height:260px;background:#000;border-radius:10px';media.append(video);}
+   else media.textContent='Video URL missing';
+   article.append(info,media);box.append(article);
+ }
 }
+
 $('adminVideoUploadForm').addEventListener('submit',async e=>{
  e.preventDefault();
  const file=$('adminVideoFile').files?.[0];
