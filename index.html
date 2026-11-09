@@ -88,6 +88,60 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
   #videoGrid .real-video-description{font-size:13px;margin:7px 12px 12px;}
   #videoGrid .real-video-missing{border-radius:0;}
 }
+
+/* TS WORLD Design 1: clean white + purple dashboard skin */
+:root{--ui-purple:#6415d9;--ui-purple2:#9b20ed;--ui-ink:#17152b;--ui-muted:#77758b;--ui-line:#e9e5f4}
+body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-ink)!important}
+#appScreen .topbar{background:#fff!important;color:var(--ui-ink)!important;border-bottom:1px solid var(--ui-line)!important;box-shadow:0 2px 14px #27104d0b}
+#appScreen .layout{background:#f7f6fc!important;grid-template-columns:220px minmax(0,1fr)!important}
+#appScreen .layout>aside{background:#fff!important;border-right:1px solid var(--ui-line)!important;color:var(--ui-ink)!important}
+#appScreen .nav a{color:#39364c!important;border-radius:12px}
+#appScreen .nav a.active,#appScreen .nav a:hover{background:#f0e8ff!important;color:var(--ui-purple)!important}
+#appScreen main{max-width:1440px;margin:auto;width:100%;padding:24px!important}
+#appScreen .hero{background:linear-gradient(115deg,#3210a8,#7620e7 60%,#a52cf1)!important;border:0!important;border-radius:22px!important;color:white!important;box-shadow:0 12px 28px #5b1bc52a}
+#appScreen .hero p,#appScreen .hero .tag{color:#fff!important}
+#appScreen .categories{gap:10px}
+#appScreen .chip{background:#fff!important;color:#403b55!important;border:1px solid var(--ui-line)!important;border-radius:22px!important}
+#appScreen .chip.active{background:var(--ui-purple)!important;color:#fff!important}
+#appScreen .section-title h2{color:var(--ui-ink)!important}
+#appScreen .videos{gap:18px!important}
+#appScreen .video{background:#fff!important;border:1px solid var(--ui-line)!important;border-radius:17px!important;box-shadow:0 5px 18px #2010440c!important;color:var(--ui-ink)!important;overflow:hidden}
+#appScreen .video h3{color:var(--ui-ink)!important}
+#appScreen .meta{color:var(--ui-muted)!important}
+.wallet-summary,.wallet-large-card{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 26px;border:1px solid #e7dcfb;border-radius:20px;background:linear-gradient(110deg,#f0e7ff,#fff 70%);box-shadow:0 7px 22px #3a17620c;margin:18px 0}
+.wallet-summary-main{display:flex;align-items:center;gap:16px}
+.wallet-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(140deg,#6c18db,#b42af0);color:#fff;font-size:27px;font-weight:900}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:1px;color:#77718b}
+.wallet-balance{font-size:30px;font-weight:900;color:#5915c6;line-height:1.25}
+.wallet-rupees{font-size:20px;font-weight:800;color:#27213b}.wallet-rupees small{font-size:12px;color:#77718b;font-weight:500}
+.wallet-summary-actions{display:flex;gap:10px;flex-wrap:wrap}
+.wallet-primary,.wallet-secondary{border:0;border-radius:13px;padding:13px 18px;font-weight:800;cursor:pointer}
+.wallet-primary{background:linear-gradient(100deg,#6515d9,#a51ee9);color:#fff}
+.wallet-secondary{background:#fff;color:#6515d9;border:1px solid #d9c7f8}
+.user-page{max-width:900px;margin:18px auto;min-height:55vh}
+.page-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 22px}
+.page-heading h1{font-size:30px;margin:5px 0;color:#211b35}.page-heading p,.wallet-info-card p{color:#77758b}
+.wallet-large-card{justify-content:flex-start;min-height:150px}
+.wallet-info-card,.withdrawal-card{background:#fff;border:1px solid var(--ui-line);border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 5px 18px #2010440a}
+.withdrawal-card h2,.wallet-info-card h2{margin:0 0 16px;color:#211b35}
+.withdrawal-card label{display:block;margin:14px 0 7px;font-weight:700;color:#39334e}
+.withdrawal-card input{width:100%;max-width:480px;padding:13px;border:1px solid #ddd5ec;border-radius:11px;background:#fff;color:#211b35;font:inherit}
+.withdrawal-card .page-wide{display:block;margin-top:16px;max-width:480px;width:100%}
+.page-wide{width:100%;margin:12px 0}
+#appScreen .earnbox{background:linear-gradient(150deg,#6820db,#a62be9)!important;border-radius:18px!important}
+@media(max-width:760px){
+ #appScreen .layout{display:block!important}
+ #appScreen .layout>aside{display:none!important}
+ #appScreen main{padding:14px 12px 90px!important}
+ #appScreen .hero{padding:22px 18px!important;margin:10px 0 14px!important}
+ .wallet-summary{display:block;padding:17px;margin:12px 0}
+ .wallet-summary-actions{display:grid;grid-template-columns:1fr 1fr;margin-top:16px}
+ .wallet-balance{font-size:26px}
+ .wallet-large-card{padding:18px;justify-content:flex-start}
+ .page-heading h1{font-size:25px}
+ .withdrawal-card{padding:17px}
+ #appScreen .videos{grid-template-columns:1fr!important}
+}
 </style>
 </head>
 <body>
@@ -168,20 +222,25 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 <div class="layout">
 <aside><nav class="nav">
 <a class="active" href="#"><span>⌂</span>Home</a><a href="#"><span>🔥</span>Trending</a><a href="#"><span>▶</span>Shorts</a><a href="#"><span>▣</span>Subscriptions</a><hr>
-<a href="#"><span>♙</span>My Channel</a><a href="#"><span>☁</span>Upload Video</a><a href="#"><span>▱</span>My Wallet</a><a href="#"><span>₹</span>Withdraw</a><a href="#"><span>◷</span>History</a><a href="#"><span>♡</span>Watch Later</a>
+<a href="#"><span>♙</span>My Channel</a><a href="#"><span>☁</span>Upload Video</a><a href="#" onclick="showUserPage('wallet');return false"><span>▱</span>My Wallet</a><a href="#" onclick="showUserPage('withdrawal');return false"><span>₹</span>Withdraw</a><a href="#"><span>◷</span>History</a><a href="#"><span>♡</span>Watch Later</a>
 </nav><div class="earnbox"><div class="coin">🪙</div><h3>Watch & Earn Coins</h3><p>Watch videos, collect coins and request your rewards.</p><button onclick="alert('Wallet and rewards will be activated in the next step.')">Start Earning ›</button></div></aside>
 <main>
 <section class="hero"><h1>TS <strong>WORLD</strong></h1><div class="tag">▶ Watch&nbsp; • &nbsp;Upload&nbsp; • &nbsp;Earn</div><p>A video platform for creators and viewers. Discover videos, share your content and earn rewards.</p><div class="hero-buttons"><button class="primary" onclick="document.querySelector('.videos').scrollIntoView({behavior:'smooth'})">▶ Watch Videos</button><button class="secondary" onclick="alert('Video upload will be connected in the next step.')">＋ Upload Video</button></div></section>
-<section id="userWalletPanel" class="admin-panel" style="margin:12px 12px 18px">
-<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
-<div><div style="color:#a6abc5;font-size:13px">My TS WORLD Wallet</div><div style="font-size:28px;font-weight:900;color:#ffd34d"><span id="walletCoins">0</span> Coins</div><div style="color:#a6abc5;font-size:13px">Amount: ₹<span id="walletAmount">0.00</span> (100 Coins = ₹1)</div></div>
-<button class="admin-action" type="button" onclick="loadUserWallet()">↻ Refresh Wallet</button></div>
-<div class="admin-panel" style="margin-top:14px"><h2>Request Withdrawal</h2><div style="display:grid;gap:9px;max-width:440px">
-<label for="withdrawCoins">Coins to withdraw</label><input id="withdrawCoins" type="number" min="1" step="1" placeholder="Enter coins" style="padding:12px;border:1px solid #414768;border-radius:10px;background:#090d1d;color:white">
-<div class="meta">Estimated amount: ₹<span id="withdrawAmountPreview">0.00</span></div>
-<label for="withdrawUpi">UPI ID</label><input id="withdrawUpi" type="text" maxlength="120" placeholder="example@upi" style="padding:12px;border:1px solid #414768;border-radius:10px;background:#090d1d;color:white">
-<button class="admin-action" id="withdrawRequestBtn" type="button" onclick="submitWithdrawalRequest()">Submit Withdrawal Request</button><div id="withdrawMessage" class="admin-note" role="status"></div></div></div>
-<div class="admin-panel" style="margin-top:14px"><h2>My Withdrawal Requests</h2><div id="myWithdrawalList" class="meta">Loading…</div></div></section>
+<section class="wallet-summary" id="homeWalletSummary">
+ <div class="wallet-summary-main"><div class="wallet-icon">₹</div><div><div class="eyebrow">MY TS WORLD WALLET</div><div class="wallet-balance"><span id="walletCoins">0</span> Coins</div><div class="wallet-rupees">₹<span id="walletAmount">0.00</span> <small>• 100 Coins = ₹1</small></div></div></div>
+ <div class="wallet-summary-actions"><button class="wallet-primary" onclick="showUserPage('withdrawal')">₹ Request Withdrawal</button><button class="wallet-secondary" onclick="showUserPage('wallet')">View Wallet</button></div>
+ </section>
+<section id="userWalletPage" class="user-page hidden">
+ <div class="page-heading"><div><div class="eyebrow">YOUR EARNINGS</div><h1>My Wallet</h1><p>Track your TS WORLD Coins and available balance.</p></div><button class="wallet-secondary" type="button" onclick="loadUserWallet()">↻ Refresh</button></div>
+ <div class="wallet-large-card"><div class="wallet-icon">₹</div><div><div class="eyebrow">AVAILABLE BALANCE</div><div class="wallet-balance"><span id="walletCoinsPage">0</span> Coins</div><div class="wallet-rupees">₹<span id="walletAmountPage">0.00</span> <small>• 100 Coins = ₹1</small></div></div></div>
+ <div class="wallet-info-card"><h2>How rewards work</h2><p>Watch at least 90% of an eligible video to receive the Coins set by the Admin. Each video reward can be claimed once.</p></div>
+ <button class="wallet-primary page-wide" onclick="showUserPage('withdrawal')">₹ Request Withdrawal</button>
+ </section>
+ <section id="userWithdrawalPage" class="user-page hidden">
+ <div class="page-heading"><div><div class="eyebrow">CASH OUT</div><h1>Withdrawal Requests</h1><p>Submit a request using your UPI ID and track its status.</p></div></div>
+ <div class="withdrawal-card"><h2>Request Withdrawal</h2><label for="withdrawCoins">Coins to withdraw</label><input id="withdrawCoins" type="number" min="1" step="1" placeholder="Enter coins"><div class="meta">Estimated amount: ₹<span id="withdrawAmountPreview">0.00</span></div><label for="withdrawUpi">UPI ID</label><input id="withdrawUpi" type="text" maxlength="120" placeholder="example@upi"><button class="wallet-primary page-wide" id="withdrawRequestBtn" type="button" onclick="submitWithdrawalRequest()">Submit Withdrawal Request</button><div id="withdrawMessage" class="admin-note" role="status"></div></div>
+ <div class="withdrawal-card"><h2>My Withdrawal Requests</h2><div id="myWithdrawalList" class="meta">Loading…</div></div>
+ </section>
 <div class="categories"><button class="chip active" onclick="filterCategory('All',this)">▦ All</button><button class="chip" onclick="filterCategory('Education',this)">🎓 Education</button><button class="chip" onclick="filterCategory('Entertainment',this)">🎬 Entertainment</button><button class="chip" onclick="filterCategory('Technology',this)">💻 Technology</button><button class="chip" onclick="filterCategory('Music',this)">♫ Music</button><button class="chip" onclick="filterCategory('Sports',this)">🏆 Sports</button><button class="chip" onclick="filterCategory('Travel',this)">✈ Travel</button></div>
 <div class="section-title"><h2>▶ Recommended for You</h2><a href="#">View All ›</a></div>
 <section class="videos" id="videoGrid">
@@ -562,12 +621,23 @@ async function loadUserVideos(){
   video.addEventListener('ended',claimReward);
  });
 }
+function showUserPage(page){
+ const homeNodes=[$('homeWalletSummary'),document.querySelector('#appScreen .categories'),document.querySelector('#appScreen .section-title'),$('videoGrid'),document.querySelector('#appScreen .hero')];
+ const wallet=$('userWalletPage'),withdraw=$('userWithdrawalPage');
+ homeNodes.forEach(node=>{if(node)node.classList.toggle('hidden',page!=='home');});
+ if(wallet)wallet.classList.toggle('hidden',page!=='wallet');
+ if(withdraw)withdraw.classList.toggle('hidden',page!=='withdrawal');
+ if(page==='wallet'||page==='withdrawal')loadUserWallet();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
 async function loadUserWallet(){
  if(!currentSignedInUser)return;
  const {data,error}=await supabaseClient.from('tsw_coin_transactions').select('coin_amount').eq('user_id',currentSignedInUser.id);
  if(error){$('walletCoins').textContent='—';$('walletAmount').textContent='—';$('withdrawMessage').textContent='Wallet error: '+error.message;return;}
  const balance=(data||[]).reduce((sum,x)=>sum+Number(x.coin_amount||0),0);
  $('walletCoins').textContent=balance;$('walletAmount').textContent=(balance/100).toFixed(2);
+ if($('walletCoinsPage'))$('walletCoinsPage').textContent=balance;
+ if($('walletAmountPage'))$('walletAmountPage').textContent=(balance/100).toFixed(2);
  const {data:req,error:reqErr}=await supabaseClient.from('tsw_withdrawal_requests').select('coins,amount_inr,upi_id,status,created_at').eq('user_id',currentSignedInUser.id).order('created_at',{ascending:false}).limit(30);
  $('myWithdrawalList').innerHTML=reqErr?'Could not load requests: '+escapeHtml(reqErr.message):(req?.length?req.map(r=>'<div class="video-row">₹'+Number(r.amount_inr).toFixed(2)+' • '+r.coins+' Coins • '+escapeHtml(r.status)+' • '+escapeHtml(new Date(r.created_at).toLocaleString())+'</div>').join(''):'No withdrawal requests yet.');
 }
