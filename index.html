@@ -143,6 +143,8 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 <label for="adminVideoTitle">Video title</label><input id="adminVideoTitle" type="text" maxlength="160" required placeholder="Enter video title">
 <label for="adminVideoDescription">Description</label><textarea id="adminVideoDescription" rows="3" maxlength="2000" placeholder="Write a short description"></textarea>
 <label for="adminVideoCategory">Category</label><select id="adminVideoCategory"><option>Education</option><option>Entertainment</option><option>Technology</option><option>Music</option><option>Sports</option><option>Travel</option><option>Other</option></select>
+<label for="adminVideoRewardCoins">Reward Coins (set by Admin)</label><input id="adminVideoRewardCoins" type="number" min="0" max="1000000" step="1" value="0" required inputmode="numeric" placeholder="Enter coins for this video">
+<div class="admin-note" id="adminRewardPreview">100 Coins = ₹1.00 • Coins are credited after 90% watch completion (reward crediting will be connected separately).</div>
 <label for="adminVideoFile">Choose video file (MP4, MOV, WEBM — max 50 MB)</label><input id="adminVideoFile" type="file" accept="video/mp4,video/quicktime,video/webm,video/*" required>
 <div class="upload-progress" id="adminVideoProgress" role="status">Select a video to upload.</div>
 <button class="admin-action" id="adminVideoUploadBtn" type="submit">⬆ Upload Video</button>
@@ -437,7 +439,9 @@ $('adminVideoUploadForm').addEventListener('submit',async e=>{
  const title=$('adminVideoTitle').value.trim();
  const description=$('adminVideoDescription').value.trim();
  const category=$('adminVideoCategory').value;
+ const rewardCoins=Number($('adminVideoRewardCoins').value);
  const btn=$('adminVideoUploadBtn');
+ if(!Number.isSafeInteger(rewardCoins) || rewardCoins<0 || rewardCoins>1000000){setVideoMessage('Enter a whole number of Coins from 0 to 1,000,000.',true);return;}
  if(!file){setVideoMessage('Please choose a video file.',true);return;}
  if(!file.type.startsWith('video/')){setVideoMessage('Selected file is not a video. Choose MP4, MOV or WEBM.',true);return;}
  if(file.size>MAX_VIDEO_BYTES){setVideoMessage('File is larger than 50 MB. Supabase free storage commonly limits uploads; choose a smaller video.',true);return;}
@@ -452,7 +456,7 @@ $('adminVideoUploadForm').addEventListener('submit',async e=>{
    const {data:publicData}=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(stored.path);
    const videoUrl=publicData?.publicUrl||'';
    setVideoMessage('File uploaded. Saving video details…');
-   const record={title,description,category,video_url:videoUrl,storage_path:stored.path,status:'published',uploaded_by:currentSignedInUser.id};
+   const record={title,description,category,video_url:videoUrl,storage_path:stored.path,status:'published',uploaded_by:currentSignedInUser.id,reward_coins:rewardCoins};
    const {error:dbError}=await supabaseClient.from('videos').insert(record);
    if(dbError){setVideoMessage('Video file uploaded, but saving its details failed: '+dbError.message+'. Storage path: '+stored.path+'. Check the videos table columns and INSERT policy.',true);return;}
    $('adminVideoUploadForm').reset();
@@ -500,6 +504,13 @@ function searchVideos(){
  document.querySelectorAll('#videoGrid .video').forEach(card=>card.style.display=card.innerText.toLowerCase().includes(q)?'block':'none');
 }
 $('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchVideos()});
+const rewardCoinsInput=$('adminVideoRewardCoins');
+if(rewardCoinsInput){
+ rewardCoinsInput.addEventListener('input',()=>{
+  const n=Math.max(0,Number(rewardCoinsInput.value)||0);
+  $('adminRewardPreview').textContent='100 Coins = ₹1.00 • This video reward: '+n+' Coins = ₹'+(n/100).toFixed(2)+' • Credited after 90% watch completion.';
+ });
+}
 initAuth();
 </script>
 
