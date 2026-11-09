@@ -448,7 +448,28 @@ async function loadAdminVideos(){
      save.disabled=false;
      status.textContent=saveError?'Could not save Coins: '+saveError.message:!updated?'No video updated. Check Supabase UPDATE/SELECT permissions.':'Saved! '+n+' Coins for this video.';
    });
-   info.append(heading,meta,desc,label,field,preview,save,status);
+   const remove=document.createElement('button');
+   remove.type='button';remove.className='admin-action';
+   remove.style.cssText='display:block;margin-top:9px;padding:10px 16px;background:#64202b;border-color:#a64255';
+   remove.textContent='Delete Video';
+   remove.addEventListener('click',async()=>{
+     if(!currentSignedInUser){status.textContent='Admin session expired. Login again.';return;}
+     if(!window.confirm('Delete this video permanently? This removes its database record and, when possible, its file from Storage.'))return;
+     remove.disabled=true;save.disabled=true;status.textContent='Deleting video…';
+     const {data:deleted,error:deleteError}=await supabaseClient.from('videos').delete().eq('id',v.id).select('id').maybeSingle();
+     if(deleteError){status.textContent='Could not delete video: '+deleteError.message+' (Check Supabase videos DELETE policy.)';remove.disabled=false;save.disabled=false;return;}
+     if(!deleted){status.textContent='No video was deleted. Check Supabase admin DELETE permission.';remove.disabled=false;save.disabled=false;return;}
+     if(v.storage_path){
+       const {error:storageDeleteError}=await supabaseClient.storage.from(VIDEO_BUCKET).remove([v.storage_path]);
+       if(storageDeleteError){
+         status.textContent='Video record deleted, but Storage file could not be removed: '+storageDeleteError.message;
+         await loadAdminVideos();return;
+       }
+     }
+     await loadAdminVideos();
+     await loadAdminOverview();
+   });
+   info.append(heading,meta,desc,label,field,preview,save,status,remove);
    let url=v.video_url||v.url||v.public_url||'';
    if(!url&&v.storage_path)url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';
    const media=document.createElement('div');
