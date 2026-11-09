@@ -151,6 +151,69 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 .channel-action.featured{background:linear-gradient(110deg,#6515d9,#a51ee9);color:white;border:0}
 .channel-action.featured span{background:#ffffff26;color:white}.channel-action.featured small{color:#f0e5ff}
 @media(max-width:760px){.channel-action-grid{grid-template-columns:1fr 1fr;gap:10px}.channel-action{padding:16px 13px}.channel-action b{font-size:15px}.channel-balance-card{padding:18px}}
+
+/* TS WORLD reference dashboard: navy, cyan and gold */
+:root{--bg:#03101e;--panel:#0a1c30;--cyan:#08e5d2;--gold:#ffd84a}
+#appScreen{background:var(--bg)!important;color:#f4f8ff!important}
+#appScreen .topbar{height:82px;padding:12px 24px;background:#03101e!important;border-bottom:1px solid #15334a!important;color:white!important;display:flex;align-items:center;gap:14px}
+#appScreen .brand{color:white!important;font-size:25px;font-weight:900}
+#appScreen .brand b{color:var(--cyan)!important}
+#appScreen .brand .play{background:linear-gradient(135deg,#ff3b9d,#7628ff)!important;border-radius:14px}
+#appScreen .search input{background:#0b2035!important;border:1px solid #294760!important;color:white!important}
+#appScreen .search button{background:var(--cyan)!important;color:#001a27!important}
+#appScreen .top-actions{display:flex;align-items:center;gap:10px}
+#appScreen .header-icon{width:40px;height:40px;border-radius:50%;border:1px solid #31536d;background:#102b43;color:white;font-size:20px;cursor:pointer}
+#appScreen .mobile-menu{display:none;background:transparent;border:0;color:white;font-size:25px}
+#appScreen .layout{background:var(--bg)!important;grid-template-columns:220px minmax(0,1fr)!important}
+#appScreen .layout>aside{background:#061727!important;border-color:#18364e!important}
+#appScreen .nav a{color:#d9e8f4!important}
+#appScreen .nav a.active,#appScreen .nav a:hover{background:#073b4b!important;color:var(--cyan)!important}
+#appScreen main{background:var(--bg)!important;max-width:1440px;margin:auto;width:100%;padding:22px!important}
+#appScreen .hero{background:linear-gradient(115deg,#05233b,#064f62 62%,#00a9a7)!important;border:1px solid #087e91!important;border-radius:22px!important;color:white!important}
+#appScreen .hero p,#appScreen .hero .tag{color:#e6faff!important}
+#appScreen .hero strong{color:var(--cyan)!important}
+#appScreen .chip{background:#0b2035!important;color:#e7f4ff!important;border:1px solid #35516a!important}
+#appScreen .chip.active{background:var(--cyan)!important;color:#00202a!important}
+#appScreen .section-title h2{color:white!important}
+#appScreen .section-title a{color:var(--cyan)!important}
+#appScreen .video{background:linear-gradient(145deg,#102943,#08192b)!important;border:1px solid #294965!important;border-radius:18px!important;color:white!important}
+#appScreen .video h3{color:white!important}
+#appScreen .meta{color:#a9bfd0!important}
+#appScreen .user-page{color:white!important}
+#appScreen .page-heading h1,#appScreen .withdrawal-card h2,#appScreen .wallet-info-card h2{color:white!important}
+#appScreen .page-heading p,#appScreen .wallet-info-card p{color:#a9bfd0!important}
+#appScreen .channel-balance-card,#appScreen .wallet-large-card{background:linear-gradient(120deg,#063d4a,#0b2438)!important;border:1px solid #078b9a!important;color:white!important}
+#appScreen .wallet-balance{color:var(--gold)!important}
+#appScreen .wallet-rupees{color:var(--cyan)!important}
+#appScreen .eyebrow{color:#a9bfd0!important}
+#appScreen .withdrawal-card,#appScreen .wallet-info-card,#appScreen .channel-action{background:#0b2035!important;border:1px solid #294965!important;color:white!important}
+#appScreen .channel-action.featured{background:linear-gradient(100deg,#00cdbd,#00a6bc)!important;color:#00232a!important}
+#appScreen .channel-action small{color:#a9bfd0!important}
+#appScreen .withdrawal-card input{background:#061727!important;color:white!important;border:1px solid #35516a!important}
+#appScreen .wallet-primary{background:linear-gradient(100deg,#00e0c5,#00b8cb)!important;color:#00232a!important}
+#appScreen .wallet-secondary{background:#102943!important;color:white!important;border:1px solid #35516a!important}
+.mobile-bottom-nav{display:none}
+@media(max-width:760px){
+ #appScreen .topbar{height:72px;padding:8px 12px;gap:8px}
+ #appScreen .mobile-menu{display:block}
+ #appScreen .brand{font-size:19px;min-width:0}
+ #appScreen .brand small{font-size:8px}
+ #appScreen .search{display:none}
+ #appScreen .top-actions{margin-left:auto}
+ #appScreen .top-actions .user-pill,#appScreen .top-actions .upload{display:none!important}
+ #appScreen .header-icon{width:34px;height:34px}
+ #appScreen .layout{display:block!important}
+ #appScreen .layout>aside{display:none!important}
+ #appScreen .layout>aside.mobile-open{display:block!important;position:fixed;z-index:100;top:72px;left:0;width:80%;max-width:280px;height:calc(100vh - 72px);overflow:auto}
+ #appScreen main{padding:12px 12px 100px!important}
+ #appScreen .hero{padding:20px 16px!important;margin:8px 0 14px!important}
+ #appScreen .videos{grid-template-columns:1fr!important;gap:14px!important}
+ .mobile-bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:120;bottom:0;left:0;right:0;padding:8px 4px calc(8px + env(safe-area-inset-bottom));background:#061727f5;border-top:1px solid #254461;backdrop-filter:blur(12px)}
+ .mobile-bottom-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:0;color:#d9e8f4;font-size:11px;padding:5px 1px}
+ .mobile-bottom-nav button span{font-size:22px;line-height:1.1}
+ .mobile-bottom-nav button.active{color:var(--cyan);font-weight:800}
+ .channel-action-grid{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
@@ -226,22 +289,19 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 <header class="topbar">
   <div class="brand"><div class="play">▶</div><div>TS <b>WORLD</b><small>WATCH • UPLOAD • EARN</small></div></div>
   <div class="search"><input id="searchInput" placeholder="Search videos, channels, or topics..."><button onclick="searchVideos()">⌕</button></div>
-  <div class="top-actions"><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
+  <div class="top-actions"><button class="header-icon" type="button" aria-label="Notifications">♧</button><button class="header-icon profile-icon" type="button" onclick="showUserPage('channel')" aria-label="My Account">●</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
 </header>
 <div class="layout">
 <aside><nav class="nav">
 <a class="active" href="#"><span>⌂</span>Home</a><a href="#"><span>🔥</span>Trending</a><a href="#"><span>▶</span>Shorts</a><a href="#"><span>▣</span>Subscriptions</a><hr>
-<a href="#" onclick="showUserPage('channel');return false"><span>♙</span>My Channel</a><a href="#"><span>☁</span>Upload Video</a><a href="#"><span>♡</span>Watch Later</a>
+<a href="#" onclick="showUserPage('channel');return false"><span>♙</span>My Account</a><a href="#"><span>☁</span>Upload Video</a><a href="#"><span>♡</span>Watch Later</a>
 </nav><div class="earnbox"><div class="coin">🪙</div><h3>Watch & Earn Coins</h3><p>Watch videos, collect coins and request your rewards.</p><button onclick="alert('Wallet and rewards will be activated in the next step.')">Start Earning ›</button></div></aside>
 <main>
 <section class="hero"><h1>TS <strong>WORLD</strong></h1><div class="tag">▶ Watch&nbsp; • &nbsp;Upload&nbsp; • &nbsp;Earn</div><p>A video platform for creators and viewers. Discover videos, share your content and earn rewards.</p><div class="hero-buttons"><button class="primary" onclick="document.querySelector('.videos').scrollIntoView({behavior:'smooth'})">▶ Watch Videos</button><button class="secondary" onclick="alert('Video upload will be connected in the next step.')">＋ Upload Video</button></div></section>
-<section class="wallet-summary" id="homeWalletSummary">
- <div class="wallet-summary-main"><div class="wallet-icon">₹</div><div><div class="eyebrow">MY TS WORLD WALLET</div><div class="wallet-balance"><span id="walletCoins">0</span> Coins</div><div class="wallet-rupees">₹<span id="walletAmount">0.00</span> <small>• 100 Coins = ₹1</small></div></div></div>
- <div class="wallet-summary-actions"><button class="wallet-primary" onclick="showUserPage('withdrawal')">₹ Request Withdrawal</button><button class="wallet-secondary" onclick="showUserPage('wallet')">View Wallet</button></div>
- </section>
+
 <section id="userChannelPage" class="user-page hidden">
- <div class="page-heading"><div><div class="eyebrow">YOUR PERSONAL SPACE</div><h1>My Channel</h1><p>Manage your earnings, withdrawals and wallet activity in one place.</p></div></div>
- <div class="channel-balance-card"><div><div class="eyebrow">TOTAL WALLET BALANCE</div><div class="wallet-balance"><span id="channelWalletCoins">0</span> Coins</div><div class="wallet-rupees">₹<span id="channelWalletAmount">0.00</span> <small>• 100 Coins = ₹1</small></div></div><div class="wallet-icon">₹</div></div>
+ <div class="page-heading"><div><div class="eyebrow">YOUR PERSONAL SPACE</div><h1>My Account</h1><p>Manage your earnings, withdrawals and wallet activity in one place.</p></div></div>
+ <div class="channel-balance-card"><div><div class="eyebrow">TOTAL WALLET BALANCE</div><div class="wallet-balance"><span id="walletCoins">0</span> Coins</div><div class="wallet-rupees">₹<span id="walletAmount">0.00</span> <small>• 100 Coins = ₹1</small></div></div><div class="wallet-icon">₹</div></div>
  <div class="channel-action-grid">
   <button class="channel-action" onclick="showUserPage('wallet')"><span>👛</span><b>My Wallet</b><small>View Coins and balance</small></button>
   <button class="channel-action featured" onclick="showUserPage('withdrawal')"><span>₹</span><b>Request Withdrawal</b><small>Withdraw your earnings</small></button>
@@ -276,7 +336,14 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 <article class="video" data-category="Entertainment"><div class="thumb t7">DAILY<br>MOTIVATION<small>NEVER GIVE UP</small><span class="duration">7:10</span></div><h3>Daily Motivation – Start Your Day Strong</h3><p class="meta"><span class="channel">Inspire You</span><br>1.8K views • 1 day ago</p></article>
 <article class="video" data-category="Entertainment"><div class="thumb t8">MOVIE<br>REVIEW<small>THIS WEEK</small><span class="duration">9:28</span></div><h3>Latest Movie Review – What You Should Know</h3><p class="meta"><span class="channel">Cinema Talk</span><br>4.5K views • 2 days ago</p></article>
 </section><footer>© 2026 TS WORLD • Watch • Upload • Earn</footer>
-</main></div></div>
+</main></div>
+<nav class="mobile-bottom-nav" aria-label="Main navigation">
+ <button class="active" onclick="showUserPage('home')"><span>⌂</span>Home</button>
+ <button onclick="showUserPage('home')"><span>♨</span>Trending</button>
+ <button onclick="alert('Video upload will be connected in the next step.')"><span>＋</span>Upload</button>
+ <button onclick="showUserPage('home')"><span>▣</span>Subscriptions</button>
+ <button onclick="showUserPage('channel')"><span>♙</span>My Account</button>
+</nav></div>
 
 <script>
 const SUPABASE_URL = 'https://pcublhazcdcoggpxslxy.supabase.co';
@@ -645,7 +712,7 @@ async function loadUserVideos(){
  });
 }
 function showUserPage(page){
- const homeNodes=[$('homeWalletSummary'),document.querySelector('#appScreen .categories'),document.querySelector('#appScreen .section-title'),$('videoGrid'),document.querySelector('#appScreen .hero')];
+ const homeNodes=[document.querySelector('#appScreen .hero'),document.querySelector('#appScreen .categories'),document.querySelector('#appScreen .section-title'),$('videoGrid'),document.querySelector('#appScreen .hero')];
  const channel=$('userChannelPage'),history=$('userHistoryPage'),wallet=$('userWalletPage'),withdraw=$('userWithdrawalPage');
  homeNodes.forEach(node=>{if(node)node.classList.toggle('hidden',page!=='home');});
  if(channel)channel.classList.toggle('hidden',page!=='channel');
