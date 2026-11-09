@@ -72,6 +72,22 @@ main{padding:22px 24px;min-width:0}.hero{min-height:270px;border:1px solid #7336
 @media(max-width:380px){.brand{font-size:18px}.top-actions .login{padding:7px 9px}.hero{min-height:175px}.hero h1{font-size:30px}}
 
 .video-upload-form{display:grid;gap:9px;max-width:720px;margin-top:16px}.video-upload-form label{font-size:13px;color:#d7d8e8;margin-top:5px}.video-upload-form input,.video-upload-form textarea,.video-upload-form select{width:100%;padding:12px;border:1px solid #414768;border-radius:10px;background:#090d1d;color:#fff;font:inherit}.video-upload-form input[type=file]{padding:10px}.upload-progress{font-size:13px;color:#ffd27a;min-height:22px;overflow-wrap:anywhere}.video-upload-form button{justify-self:start;min-width:170px}.video-row{padding:12px 0;border-bottom:1px solid #282d49;overflow-wrap:anywhere}.video-row a{color:#dca5ff}
+
+/* Uploaded video cards: responsive sizing on desktop and phone */
+.real-video-card{display:block;min-width:0;width:100%;max-width:100%;overflow:hidden;background:transparent;border-radius:12px}
+.real-video-player{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#000;border:0;border-radius:12px}
+.real-video-card h3{overflow-wrap:anywhere}
+.real-video-description{margin:6px 2px;color:#c8cbe0;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+.real-video-missing{width:100%;aspect-ratio:16/9;display:grid;place-items:center;background:#111529;color:#ffd27a;border-radius:12px;padding:12px;text-align:center}
+@media(max-width:760px){
+  #videoGrid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;width:100%;}
+  #videoGrid .real-video-card{width:100%;max-width:100%;margin:0;border-radius:0;}
+  #videoGrid .real-video-player{width:100%;max-width:100%;height:auto;aspect-ratio:16/9;border-radius:0;object-fit:contain;}
+  #videoGrid .real-video-card h3{font-size:15px;line-height:1.35;margin:8px 12px 4px;}
+  #videoGrid .real-video-card .meta{font-size:12px;margin:0 12px;line-height:1.45;}
+  #videoGrid .real-video-description{font-size:13px;margin:7px 12px 12px;}
+  #videoGrid .real-video-missing{border-radius:0;}
+}
 </style>
 </head>
 <body>
