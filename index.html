@@ -319,7 +319,10 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 </section>
 <section id="adminUsers" class="admin-tab hidden"><div class="admin-heading"><div><h1>User Management</h1><p>Approve new registrations before users can access TS WORLD</p></div><button class="admin-action" type="button" onclick="loadAdminUsers()">↻ Refresh</button></div><div class="admin-panel"><div class="admin-note" style="margin-bottom:14px">PENDING: waiting for approval • APPROVED: can access TS WORLD • REJECTED: denied • REVOKED: previously approved, access stopped. Use Refresh to reload registrations.</div><table class="admin-table"><thead><tr><th>Email</th><th>Role</th><th>Approval Status</th><th>Action</th></tr></thead><tbody id="adminUsersBody"><tr><td colspan="4">Loading users…</td></tr></tbody></table></div></section>
 <section id="adminRewards" class="admin-tab hidden"><div class="admin-heading"><div><h1>Reward Rules</h1><p>Coin rewards configuration</p></div></div><div class="admin-panel"><p class="admin-note">Reward rules table exists in your Supabase project. Its exact column structure must be checked before safely enabling add/edit controls.</p><div id="adminRulesData">Loading reward rules…</div></div></section>
-<section id="adminWithdrawals" class="admin-tab hidden"><div class="admin-heading"><div><h1>Withdrawal Requests</h1><p>Review user payout requests</p></div></div><div class="admin-panel"><p class="admin-note">Withdrawal request storage and payment status table are not connected yet.</p></div></section>
+<section id="adminWithdrawals" class="admin-tab hidden">
+<div class="admin-heading"><div><h1>Withdrawal Requests</h1><p>Review user payout requests</p></div><button class="admin-action" type="button" onclick="loadAdminWithdrawals()">↻ Refresh</button></div>
+<div class="admin-panel"><div id="adminWithdrawalsMessage" class="admin-note" role="status">Loading withdrawal requests…</div>
+<div style="width:100%;overflow-x:auto"><table class="admin-table" style="min-width:850px"><thead><tr><th>User</th><th>Coins</th><th>Amount</th><th>UPI ID</th><th>Status</th><th>Requested</th><th>Actions</th></tr></thead><tbody id="adminWithdrawalsBody"><tr><td colspan="7">Loading…</td></tr></tbody></table></div></div></section>
 <section id="adminSettings" class="admin-tab hidden"><div class="admin-heading"><div><h1>Platform Settings</h1><p>Admin-only settings</p></div></div><div class="admin-panel"><p>Signed in as administrator: <b id="adminSettingsEmail"></b></p><p class="admin-note">Only the account whose role is <b>admin</b> in public.profiles should see this dashboard.</p></div></section>
 </main></div></div>
 
@@ -563,18 +566,72 @@ function openAdminTab(tab,button){
   if(tab==='users') loadAdminUsers();
   if(tab==='videos') loadAdminVideos();
   if(tab==='rewards') loadAdminRules();
+  if(tab==='withdrawals') loadAdminWithdrawals();
 }
 async function loadAdminOverview(){
   const [users,rules,videos,withdrawals]=await Promise.all([
     supabaseClient.from('profiles').select('*',{count:'exact',head:true}),
     supabaseClient.from('reward_rules').select('*',{count:'exact',head:true}),
     supabaseClient.from('videos').select('*',{count:'exact',head:true}),
-    supabaseClient.from('withdrawal_requests').select('*',{count:'exact',head:true})
+    supabaseClient.from('tsw_withdrawal_requests').select('*',{count:'exact',head:true})
   ]);
   $('adminUserCount').textContent=users.count ?? '—';
   $('adminRuleCount').textContent=rules.count ?? '—';
   $('adminVideoCount').textContent=videos.error?'Not connected':(videos.count ?? 0);
   $('adminWithdrawalCount').textContent=withdrawals.error?'Not connected':(withdrawals.count ?? 0);
+}
+async function loadAdminWithdrawals(){
+  const body=$('adminWithdrawalsBody');
+  const message=$('adminWithdrawalsMessage');
+  if(!body)return;
+  body.innerHTML='<tr><td colspan="7">Loading withdrawal requests…</td></tr>';
+  if(message)message.textContent='Reading tsw_withdrawal_requests…';
+  const {data:requests,error}=await supabaseClient
+    .from('tsw_withdrawal_requests')
+    .select('*')
+    .order('created_at',{ascending:false})
+    .limit(200);
+  if(error){
+    body.innerHTML='<tr><td colspan="7">Could not load requests: '+escapeHtml(error.message)+'</td></tr>';
+    if(message)message.textContent='Check SELECT permission / RLS for tsw_withdrawal_requests.';
+    return;
+  }
+  if(!requests?.length){
+    body.innerHTML='<tr><td colspan="7">No withdrawal requests found.</td></tr>';
+    if(message)message.textContent='No withdrawal requests yet.';
+    $('adminWithdrawalCount').textContent='0';
+    return;
+  }
+  // Resolve user email separately; request table stores user_id, not email.
+  const ids=[...new Set(requests.map(r=>r.user_id).filter(Boolean))];
+  let emailById={};
+  if(ids.length){
+    const {data:profiles}=await supabaseClient.from('profiles').select('user_id,email').in('user_id',ids);
+    (profiles||[]).forEach(p=>{emailById[p.user_id]=p.email||'';});
+  }
+  body.innerHTML=requests.map(r=>{
+    const status=String(r.status||'pending').toLowerCase();
+    const user=emailById[r.user_id]||r.user_id||'Unknown user';
+    const date=r.created_at?new Date(r.created_at).toLocaleString():'—';
+    const safeId=escapeHtml(r.id);
+    const actions=status==='paid'
+      ? '<span>Paid</span>'
+      : `<button class="admin-action" style="display:inline-block;padding:7px 10px;background:#174b35" onclick="updateWithdrawalStatus('${safeId}','paid')">Mark Paid</button> <button class="admin-action" style="display:inline-block;padding:7px 10px;background:#57321a" onclick="updateWithdrawalStatus('${safeId}','rejected')">Reject</button>`;
+    return '<tr><td>'+escapeHtml(user)+'</td><td>'+escapeHtml(r.coins)+'</td><td>₹'+(Number(r.amount_inr)||0).toFixed(2)+'</td><td>'+escapeHtml(r.upi_id||'—')+'</td><td>'+escapeHtml(status.toUpperCase())+'</td><td>'+escapeHtml(date)+'</td><td>'+actions+'</td></tr>';
+  }).join('');
+  $('adminWithdrawalCount').textContent=String(requests.length);
+  if(message)message.textContent='Loaded '+requests.length+' withdrawal request(s).';
+}
+async function updateWithdrawalStatus(requestId,status){
+  if(!['paid','rejected'].includes(status))return;
+  const action=status==='paid'?'mark this request as PAID':'REJECT this request';
+  if(!confirm('Are you sure you want to '+action+'?'))return;
+  const {data,error}=await supabaseClient.from('tsw_withdrawal_requests')
+    .update({status}).eq('id',requestId).select('id,status').maybeSingle();
+  if(error){alert('Could not update withdrawal status: '+error.message+' (Check UPDATE RLS policy.)');return;}
+  if(!data){alert('No request was updated. Check admin UPDATE permission.');return;}
+  await loadAdminWithdrawals();
+  await loadAdminOverview();
 }
 async function loadAdminUsers(){
   const body=$('adminUsersBody'); body.innerHTML='<tr><td colspan="4">Loading…</td></tr>';
