@@ -541,16 +541,25 @@ async function loadUserVideos(){
  }).join('');
  grid.querySelectorAll('video[data-reward-video]').forEach(video=>{
   let submitted=false;
-  video.addEventListener('timeupdate',async()=>{
-   if(submitted||!video.duration||video.currentTime/video.duration<0.9)return;
-   submitted=true;video.pause();
-   const note=video.closest('.real-video-card').querySelector('.video-reward-note');
-   note.textContent='Checking reward…';
-   const {data,error}=await supabaseClient.rpc('tsw_claim_video_reward',{p_video_id:video.dataset.rewardVideo});
-   if(error){submitted=false;note.textContent='Reward error: '+error.message;return;}
-   note.textContent=data?.already_claimed?'Reward already claimed for this video.':'🪙 '+(data?.coins_awarded||0)+' Coins credited!';
-   await loadUserWallet();
-  });
+  const claimReward=async()=>{
+   if(submitted||!Number.isFinite(video.duration)||video.duration<=0||video.currentTime/video.duration<0.9)return;
+   submitted=true;
+   const card=video.closest('.real-video-card');
+   const note=card?.querySelector('.video-reward-note');
+   if(note)note.textContent='90% watched. Crediting Coins…';
+   try{
+    const {data,error}=await supabaseClient.rpc('tsw_claim_video_reward',{p_video_id:video.dataset.rewardVideo});
+    if(error)throw error;
+    const awarded=Number(data?.coins_awarded)||0;
+    if(note)note.textContent=data?.already_claimed?'You have already received Coins for this video.':awarded>0?'🪙 '+awarded+' Coins added to your Wallet!':'This video has 0 Reward Coins.';
+    await loadUserWallet();
+   }catch(err){
+    submitted=false;
+    if(note)note.textContent='Coins could not be added: '+(err.message||'Please try again.');
+   }
+  };
+  video.addEventListener('timeupdate',claimReward);
+  video.addEventListener('ended',claimReward);
  });
 }
 async function loadUserWallet(){
@@ -562,6 +571,7 @@ async function loadUserWallet(){
  const {data:req,error:reqErr}=await supabaseClient.from('tsw_withdrawal_requests').select('coins,amount_inr,upi_id,status,created_at').eq('user_id',currentSignedInUser.id).order('created_at',{ascending:false}).limit(30);
  $('myWithdrawalList').innerHTML=reqErr?'Could not load requests: '+escapeHtml(reqErr.message):(req?.length?req.map(r=>'<div class="video-row">₹'+Number(r.amount_inr).toFixed(2)+' • '+r.coins+' Coins • '+escapeHtml(r.status)+' • '+escapeHtml(new Date(r.created_at).toLocaleString())+'</div>').join(''):'No withdrawal requests yet.');
 }
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentSignedInUser)loadUserWallet();});
 $('withdrawCoins')?.addEventListener('input',()=>{$('withdrawAmountPreview').textContent=(Math.max(0,Number($('withdrawCoins').value)||0)/100).toFixed(2);});
 async function submitWithdrawalRequest(){
  const coins=Number($('withdrawCoins').value),upi=$('withdrawUpi').value.trim(),btn=$('withdrawRequestBtn'),msg=$('withdrawMessage');
