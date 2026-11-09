@@ -285,7 +285,8 @@ async function showApp(user){
   }else{
     $('appScreen').classList.remove('hidden');
     $('userLabel').textContent = user.email || 'User';
-    await loadUserVideos();\n    await loadUserWallet();
+    await loadUserVideos();
+    await loadUserWallet();
   }
 }
 async function logout(){
