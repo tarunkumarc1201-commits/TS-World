@@ -162,7 +162,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 #appScreen .search input{background:#0b2035!important;border:1px solid #294760!important;color:white!important}
 #appScreen .search button{background:var(--cyan)!important;color:#001a27!important}
 #appScreen .top-actions{display:flex;align-items:center;gap:10px}
-#appScreen .header-icon{width:40px;height:40px;border-radius:50%;border:1px solid #31536d;background:#102b43;color:white;font-size:20px;cursor:pointer}
+#appScreen .header-icon{width:40px;height:40px;border-radius:50%;border:1px solid #31536d;background:#102b43;color:white;font-size:20px;cursor:pointer}\n#appScreen .header-logout{border:1px solid #31536d;background:#102b43;color:#fff;border-radius:22px;padding:9px 16px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
 #appScreen .mobile-menu{display:none;background:transparent;border:0;color:white;font-size:25px}
 #appScreen .layout{background:var(--bg)!important;grid-template-columns:220px minmax(0,1fr)!important}
 #appScreen .layout>aside{background:#061727!important;border-color:#18364e!important}
@@ -201,7 +201,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
  #appScreen .search{display:none}
  #appScreen .top-actions{margin-left:auto}
  #appScreen .top-actions .user-pill,#appScreen .top-actions .upload{display:none!important}
- #appScreen .header-icon{width:34px;height:34px}
+ #appScreen .header-icon{width:34px;height:34px}\n  #appScreen .header-logout{padding:8px 11px;font-size:12px}
  #appScreen .layout{display:block!important}
  #appScreen .layout>aside{display:none!important}
  #appScreen .layout>aside.mobile-open{display:block!important;position:fixed;z-index:100;top:72px;left:0;width:80%;max-width:280px;height:calc(100vh - 72px);overflow:auto}
@@ -331,7 +331,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
   <button class="mobile-menu" type="button" onclick="document.querySelector('#appScreen .layout>aside').classList.toggle('mobile-open')" aria-label="Menu">☰</button>
   <div class="brand"><div class="play">▶</div><div>TS <b>WORLD</b><small>WATCH • UPLOAD • EARN</small></div></div>
   <div class="search"><input id="searchInput" placeholder="Search videos, channels, or topics..."><button onclick="searchVideos()">⌕</button></div>
-  <div class="top-actions"><button class="header-icon" type="button" aria-label="Notifications">♧</button><button class="header-icon profile-icon" type="button" onclick="showUserPage('channel')" aria-label="My Account">●</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
+  <div class="top-actions"><button class="header-logout" type="button" onclick="logout()">Logout</button><button class="header-icon profile-icon" type="button" onclick="showUserPage('channel')" aria-label="My Account">●</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button></div>
 </header>
 <div class="layout">
 <aside><nav class="nav">
