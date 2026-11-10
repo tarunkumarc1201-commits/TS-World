@@ -286,6 +286,69 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
  .mobile-bottom-nav .upload-tab span{display:grid;place-items:center;width:42px;height:30px;border-radius:11px;background:linear-gradient(120deg,#08e5d2,#00a9c0);color:#03101d;font-size:27px!important;font-weight:500}
 }
 
+
+/* FINAL TS WORLD mobile visual skin — matched to the supplied reference */
+@media(max-width:760px){
+ #appScreen{background:#020817!important;color:#fff!important}
+ #appScreen .topbar{height:58px;min-height:58px;padding:5px 12px;background:#03091c!important;border-bottom:1px solid #30205f!important;box-shadow:0 3px 16px #0009;gap:8px}
+ #appScreen .mobile-menu{display:none!important}
+ #appScreen .brand{min-width:0;flex:1;gap:8px;font-size:21px;letter-spacing:-.8px}
+ #appScreen .brand .play{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#ffe12e 0%,#ff8b00 30%,#00d8ff 58%,#b000ff 82%)!important;color:#061126!important;box-shadow:0 0 16px #00cfff66;font-size:23px}
+ #appScreen .brand .wordmark-text{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
+ #appScreen .brand .ts-mark{font-style:italic;font-weight:950;color:#fff}
+ #appScreen .brand b{font-style:italic;font-weight:950;background:linear-gradient(90deg,#fff22a,#ffb000 50%,#fff22a);background-clip:text;color:transparent!important}
+ #appScreen .brand small{flex-basis:100%;font-size:8px;letter-spacing:1.2px;margin-top:-5px;color:#d7d9ec}
+ #appScreen .top-actions{gap:10px}
+ #appScreen .top-actions .notification-icon,#appScreen .top-actions .search-toggle{display:inline-grid!important;place-items:center;width:30px;height:34px;border:0;background:transparent!important;color:#fff!important;font-size:22px}
+ #appScreen .top-actions .notification-icon{font-size:21px}
+ #appScreen .top-actions .user-pill,#appScreen .top-actions .upload,#appScreen .top-actions .login{display:none!important}
+ #appScreen #mobileSearch{display:none!important;position:absolute;left:10px;right:10px;top:60px;z-index:30;max-width:none;background:#10142c;border:1px solid #6c2aff;border-radius:24px}
+ #appScreen #mobileSearch.search-open{display:flex!important}
+ #appScreen .mobile-top-tabs{height:43px;display:flex!important;align-items:center;justify-content:space-around;gap:4px;padding:0 8px;background:#03091c!important;border-bottom:1px solid #241b4b!important;overflow:hidden}
+ #appScreen .mobile-top-tabs button{height:31px;padding:0 13px;border:0;border-radius:18px;background:transparent;color:#f4f3ff;font-weight:750;font-size:12px;white-space:nowrap}
+ #appScreen .mobile-top-tabs button.selected{background:linear-gradient(100deg,#d000ff,#1b9dff);box-shadow:0 0 15px #a000ff88}
+ #appScreen .layout{display:block!important;min-height:0;background:#020817!important}
+ #appScreen .layout>aside{display:none!important}
+ #appScreen main{padding:9px 0 88px!important;background:#020817!important}
+ #appScreen .tsw-feature-banner{height:174px;min-height:174px;margin:0 10px 12px!important;padding:12px 14px!important;position:relative;overflow:hidden;border:1px solid #5b17ca!important;border-radius:15px!important;background:radial-gradient(circle at 82% 50%,#092c94 0,#051344 30%,transparent 55%),radial-gradient(circle at 10% 100%,#7a008e 0,transparent 48%),linear-gradient(110deg,#10002d,#020b2b 65%,#15003e)!important;box-shadow:0 0 22px #8a00ff55}
+ #appScreen .tsw-feature-banner:after{content:"";position:absolute;inset:auto 0 0;height:3px;background:linear-gradient(90deg,#ec00ff,#00cfff,#ffca00)}
+ #appScreen .banner-brand{position:absolute;z-index:2;left:17px;top:18px;width:54%}
+ #appScreen .banner-play{display:grid;place-items:center;width:38px;height:38px;margin:0 auto 4px;border-radius:13px;color:#07132c;font-size:25px;background:linear-gradient(135deg,#ffe02d,#ff8b00 35%,#00dfff 62%,#a000ff);box-shadow:0 0 18px #00cfff66}
+ #appScreen .banner-brand h1{font-size:26px;line-height:1;margin:0;text-align:center;letter-spacing:-1px;white-space:nowrap}
+ #appScreen .banner-brand h1 i{font-style:italic;color:#fff}
+ #appScreen .banner-brand h1 strong{font-style:italic;color:#ffd21e!important}
+ #appScreen .banner-line{height:2px;margin:5px 0 4px;background:linear-gradient(90deg,transparent,#ffbd22,#f0e8ff,#ffbd22,transparent)}
+ #appScreen .banner-brand .tag{font-size:11px;text-align:center;color:#fff!important;font-weight:650}
+ #appScreen .banner-brand .tag b{color:#ffd21e}
+ #appScreen .banner-orbit{position:absolute;right:-7px;top:9px;width:49%;height:145px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#071b5c 0 35%,#0632a0 38%,#00cfff 43%,#13004c 48%,transparent 65%);filter:drop-shadow(0 0 10px #006dff)}
+ #appScreen .orbit-globe{width:78px;height:78px;display:grid;place-items:center;border-radius:50%;font-size:45px;color:#07132c;background:linear-gradient(135deg,#ffe02d,#ff8b00 35%,#00dfff 62%,#a000ff);box-shadow:0 0 18px #00cfff}
+ #appScreen .film-strip{position:absolute;right:6px;bottom:7px;color:#fff;font-size:20px;letter-spacing:-5px;transform:rotate(-10deg);text-shadow:0 2px 6px #000}
+ #appScreen .banner-dots{position:absolute;bottom:7px;left:0;right:0;display:flex;justify-content:center;gap:7px}
+ #appScreen .banner-dots span,#appScreen .banner-dots i{width:7px;height:7px;border-radius:50%;background:#77819f}
+ #appScreen .banner-dots span{width:19px;border-radius:8px;background:#df00f7}
+ #appScreen .categories{display:none!important}
+ #appScreen .section-title{padding:0 12px!important;margin:12px 0 10px!important}
+ #appScreen .section-title h2{font-size:16px!important;color:#fff!important}
+ #appScreen .section-title a{font-size:11px;color:#e500ff!important}
+ #appScreen .videos,#appScreen #videoGrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px 9px!important;padding:0 9px!important}
+ #appScreen .video,#appScreen .real-video-card{min-width:0;border:0!important;border-radius:9px!important;background:transparent!important;box-shadow:none!important;overflow:hidden}
+ #appScreen .thumb,#appScreen .real-video-player,#appScreen .real-video-missing{aspect-ratio:16/9!important;height:auto!important;width:100%!important;border-radius:9px!important;border:0!important}
+ #appScreen .video h3,#appScreen .real-video-card h3{font-size:11px!important;line-height:1.25!important;color:#fff!important;margin:5px 2px 3px!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ #appScreen .meta{font-size:9px!important;line-height:1.35!important;color:#9ba6c1!important;margin:0 2px!important}
+ #appScreen .channel{color:#dce2f5!important}
+ #appScreen .video-reward-note{font-size:9px!important;margin:4px 2px!important}
+ #appScreen .real-video-description{display:none}
+ #appScreen .mobile-bottom-nav{position:fixed!important;left:0;right:0;bottom:0;z-index:60;height:62px;padding:5px 8px calc(5px + env(safe-area-inset-bottom));display:flex!important;align-items:center;justify-content:space-around;background:#03091c!important;border-top:1px solid #36205d!important;box-shadow:0 -5px 20px #0009}
+ #appScreen .mobile-bottom-nav button{min-width:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;background:transparent;color:#fff;font-size:10px;font-weight:650}
+ #appScreen .mobile-bottom-nav button span{font-size:20px;line-height:1.1}
+ #appScreen .mobile-bottom-nav .upload-tab{width:42px;height:42px;min-width:42px;border:2px solid #a000ff;border-radius:50%;background:#06142d;box-shadow:0 0 10px #008dff, inset 0 0 10px #a000ff;color:#fff;font-size:0}
+ #appScreen .mobile-bottom-nav .upload-tab span{font-size:31px;color:#fff}
+ #appScreen .mobile-bottom-nav button.active{color:#fff}
+}
+@media(min-width:761px){
+ #appScreen .tsw-feature-banner{background:linear-gradient(110deg,#10002d,#020b2b 65%,#15003e)!important}
+}
+
 </style>
 </head>
 <body>
@@ -374,7 +437,11 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 <a href="#" onclick="showUserPage('channel');return false"><span>♙</span>My Account</a><a href="#"><span>☁</span>Upload Video</a><a href="#"><span>♡</span>Watch Later</a>
 </nav><div class="earnbox"><div class="coin">🪙</div><h3>Watch & Earn Coins</h3><p>Watch videos, collect coins and request your rewards.</p><button onclick="alert('Wallet and rewards will be activated in the next step.')">Start Earning ›</button></div></aside>
 <main>
-<section class="hero"><h1>TS <strong>WORLD</strong></h1><div class="tag">▶ Watch&nbsp; • &nbsp;Upload&nbsp; • &nbsp;Earn</div><p>A video platform for creators and viewers. Discover videos, share your content and earn rewards.</p><div class="hero-buttons"><button class="primary" onclick="document.querySelector('.videos').scrollIntoView({behavior:'smooth'})">▶ Watch Videos</button><button class="secondary" onclick="alert('Video upload will be connected in the next step.')">＋ Upload Video</button></div></section>
+<section class="hero tsw-feature-banner">
+ <div class="banner-brand"><span class="banner-play">▶</span><h1><i>TS</i> <strong>WORLD</strong></h1><div class="banner-line"></div><div class="tag">Watch <b>•</b> Upload <b>•</b> Earn</div></div>
+ <div class="banner-orbit"><div class="orbit-globe">▶</div><div class="film-strip">▰ ▰ ▰ ▰ ▰</div></div>
+ <div class="banner-dots"><span></span><i></i><i></i><i></i></div>
+</section>
 
 <section id="userChannelPage" class="user-page hidden">
  <div class="page-heading"><div><div class="eyebrow">YOUR PERSONAL SPACE</div><h1>My Account</h1><p>Manage your earnings, withdrawals and wallet activity in one place.</p></div></div>
@@ -402,7 +469,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
  <div class="withdrawal-card"><h2>My Withdrawal Requests</h2><div id="myWithdrawalList" class="meta">Loading…</div></div>
  </section>
 <div class="categories"><button class="chip active" onclick="filterCategory('All',this)">▦ All</button><button class="chip" onclick="filterCategory('Education',this)">🎓 Education</button><button class="chip" onclick="filterCategory('Entertainment',this)">🎬 Entertainment</button><button class="chip" onclick="filterCategory('Technology',this)">💻 Technology</button><button class="chip" onclick="filterCategory('Music',this)">♫ Music</button><button class="chip" onclick="filterCategory('Sports',this)">🏆 Sports</button><button class="chip" onclick="filterCategory('Travel',this)">✈ Travel</button></div>
-<div class="section-title"><h2>▶ Recommended for You</h2><a href="#">View All ›</a></div>
+<div class="section-title"><h2>🔥 Trending Videos</h2><a href="#">See All ›</a></div>
 <section class="videos" id="videoGrid">
 <article class="video" data-category="Travel"><div class="thumb">🏔️<br>BEAUTIFUL NATURE<small>4K • RELAXING SCENERY</small><span class="duration">10:24</span></div><h3>Beautiful Nature – 4K Video | Relaxing Scenery</h3><p class="meta"><span class="channel">Nature World</span><br>2.4K views • 3 days ago</p></article>
 <article class="video" data-category="Education"><div class="thumb t2">CLASS 9 MATHS<br><small>QUADRATIC EQUATIONS</small><span class="duration">12:18</span></div><h3>Class 9 Maths – Quadratic Equations | Easy Explanation</h3><p class="meta"><span class="channel">TS Education</span><br>5.8K views • 5 days ago</p></article>
