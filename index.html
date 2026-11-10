@@ -349,6 +349,29 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
  #appScreen .tsw-feature-banner{background:linear-gradient(110deg,#10002d,#020b2b 65%,#15003e)!important}
 }
 
+
+/* Mobile-only finishing fixes: keep the reference layout and show Logout */
+@media(max-width:760px){
+ #appScreen .topbar{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;min-height:62px!important;height:auto!important;padding:7px 9px!important;gap:6px!important}
+ #appScreen .brand{flex:1 1 auto!important;min-width:0!important;gap:6px!important;font-size:18px!important;letter-spacing:-.6px!important}
+ #appScreen .brand .play{width:31px!important;height:31px!important;min-width:31px!important;border-radius:10px!important;font-size:19px!important}
+ #appScreen .brand .wordmark-text{gap:3px!important}
+ #appScreen .brand .wordmark-text small{font-size:6px!important;letter-spacing:1px!important;top:19px!important}
+ #appScreen .top-actions{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:4px!important;margin-left:auto!important}
+ #appScreen .top-actions .notification-icon,#appScreen .top-actions .search-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:29px!important;min-width:29px!important;height:34px!important;padding:0!important;font-size:19px!important}
+ #appScreen .top-actions .login{display:inline-flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important;margin-left:2px!important;padding:7px 10px!important;border:1px solid #df42ff!important;border-radius:18px!important;background:linear-gradient(110deg,#8c00ed,#d000d9)!important;color:#fff!important;font-size:11px!important;font-weight:800!important;box-shadow:0 0 10px #a000ff55!important}
+ #appScreen .top-actions .user-pill,#appScreen .top-actions .upload{display:none!important}
+ #appScreen #mobileSearch{top:61px!important}
+ #appScreen .tsw-feature-banner{margin-top:8px!important}
+ #appScreen .mobile-bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:360px){
+ #appScreen .brand{font-size:16px!important}
+ #appScreen .brand .play{width:28px!important;height:28px!important;min-width:28px!important}
+ #appScreen .top-actions .notification-icon,#appScreen .top-actions .search-toggle{width:25px!important;min-width:25px!important;font-size:17px!important}
+ #appScreen .top-actions .login{padding:6px 8px!important;font-size:10px!important}
+}
+
 </style>
 </head>
 <body>
@@ -428,7 +451,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
   <button class="mobile-menu" type="button" onclick="document.querySelector('#appScreen .layout>aside').classList.toggle('mobile-open')" aria-label="Menu">☰</button>
   <div class="brand tsw-wordmark"><div class="play">▶</div><div class="wordmark-text"><span class="ts-mark">TS</span><b>WORLD</b><small>WATCH • UPLOAD • EARN</small></div></div>
   <div class="search" id="mobileSearch"><input id="searchInput" placeholder="Search videos, channels, or topics..."><button onclick="searchVideos()">⌕</button></div>
-  <div class="top-actions"><button class="header-icon notification-icon" type="button" aria-label="Notifications" title="Notifications">♧</button><button class="header-icon search-toggle" type="button" onclick="toggleMobileSearch()" aria-label="Search" title="Search">⌕</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
+  <div class="top-actions"><button class="header-icon notification-icon" type="button" aria-label="Notifications" title="Notifications">🔔</button><button class="header-icon search-toggle" type="button" onclick="toggleMobileSearch()" aria-label="Search" title="Search">⌕</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
 </header>
 <nav class="mobile-top-tabs" aria-label="Explore"><button class="selected" onclick="showUserPage('home');setTopTab(this)">Home</button><button onclick="showUserPage('home');setTopTab(this)">Subscriptions</button><button onclick="alert('Live videos will appear here when available.');setTopTab(this)">Live</button><button onclick="document.querySelector('#appScreen .layout>aside').classList.toggle('mobile-open');setTopTab(this)">More</button></nav>
 <div class="layout">
