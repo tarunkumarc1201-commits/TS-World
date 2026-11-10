@@ -162,7 +162,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 #appScreen .search input{background:#0b2035!important;border:1px solid #294760!important;color:white!important}
 #appScreen .search button{background:var(--cyan)!important;color:#001a27!important}
 #appScreen .top-actions{display:flex;align-items:center;gap:10px}
-#appScreen .header-icon{width:40px;height:40px;border-radius:50%;border:1px solid #31536d;background:#102b43;color:white;font-size:20px;cursor:pointer}\n#appScreen .header-logout{border:1px solid #31536d;background:#102b43;color:#fff;border-radius:22px;padding:9px 16px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+#appScreen .header-icon{width:40px;height:40px;border-radius:50%;border:1px solid #31536d;background:#102b43;color:white;font-size:20px;cursor:pointer}
 #appScreen .mobile-menu{display:none;background:transparent;border:0;color:white;font-size:25px}
 #appScreen .layout{background:var(--bg)!important;grid-template-columns:220px minmax(0,1fr)!important}
 #appScreen .layout>aside{background:#061727!important;border-color:#18364e!important}
@@ -201,7 +201,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
  #appScreen .search{display:none}
  #appScreen .top-actions{margin-left:auto}
  #appScreen .top-actions .user-pill,#appScreen .top-actions .upload{display:none!important}
- #appScreen .header-icon{width:34px;height:34px}\n  #appScreen .header-logout{padding:8px 11px;font-size:12px}
+ #appScreen .header-icon{width:34px;height:34px}
  #appScreen .layout{display:block!important}
  #appScreen .layout>aside{display:none!important}
  #appScreen .layout>aside.mobile-open{display:block!important;position:fixed;z-index:100;top:72px;left:0;width:80%;max-width:280px;height:calc(100vh - 72px);overflow:auto}
@@ -252,6 +252,40 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
  .mobile-bottom-nav button span{font-size:22px;line-height:1.1}
  .mobile-bottom-nav button.active{color:#08e5d2;font-weight:800}
 }
+
+/* TS WORLD premium YouTube-inspired mobile header and navigation */
+#appScreen .tsw-wordmark{min-width:0;gap:9px;font-size:22px;letter-spacing:-.8px}
+#appScreen .tsw-wordmark .play{width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg,#08e5d2,#087caa)!important;color:#03101d;font-size:18px;box-shadow:0 4px 15px #08e5d244}
+#appScreen .wordmark-text{display:flex;align-items:baseline;gap:4px;position:relative;line-height:1}
+#appScreen .wordmark-text .ts-mark{font-weight:950;letter-spacing:-1.2px;color:#f6fbff}
+#appScreen .wordmark-text b{font-weight:950;font-style:italic;letter-spacing:-.7px;background:linear-gradient(100deg,#fff 0%,#08e5d2 80%);background-clip:text;-webkit-background-clip:text;color:transparent!important}
+#appScreen .wordmark-text small{position:absolute;left:1px;top:23px;font-size:7px;letter-spacing:1.55px;color:#91aebe!important;white-space:nowrap}
+.mobile-top-tabs{display:none}
+#appScreen .search-toggle{display:none}
+@media(max-width:760px){
+ #appScreen .search-toggle{display:inline-flex;align-items:center;justify-content:center}
+ #appScreen .topbar{height:auto;min-height:60px;padding:8px 12px;gap:7px;flex-wrap:wrap}
+ #appScreen .mobile-menu{display:none!important}
+ #appScreen .tsw-wordmark{font-size:21px;flex:1}
+ #appScreen .tsw-wordmark .play{width:32px;height:32px;font-size:16px}
+ #appScreen .wordmark-text small{top:21px;font-size:6px;letter-spacing:1.3px}
+ #appScreen .top-actions{margin-left:auto;gap:7px}
+ #appScreen .header-icon{width:34px;height:34px;border:0;background:transparent;color:#eaf8ff;font-size:24px}
+ #appScreen .top-actions .user-pill,#appScreen .top-actions .upload,#appScreen .top-actions .login{display:none!important}
+ #appScreen .search{display:none!important;order:3;flex:0 0 100%;max-width:none;margin:5px 0 2px}
+ #appScreen .search.search-open{display:flex!important}
+ #appScreen .search input{padding:10px 13px}
+ .mobile-top-tabs{display:flex;align-items:center;gap:26px;overflow-x:auto;white-space:nowrap;padding:0 16px;height:43px;background:#03101d;border-bottom:1px solid #18364d;scrollbar-width:none}
+ .mobile-top-tabs::-webkit-scrollbar{display:none}
+ .mobile-top-tabs button{height:100%;padding:0 1px;border:0;border-bottom:2px solid transparent;background:transparent;color:#9fb3c2;font-weight:750;font-size:13px}
+ .mobile-top-tabs button.selected{color:#fff;border-bottom-color:#08e5d2}
+ .mobile-bottom-nav{grid-template-columns:repeat(4,1fr)!important;padding:6px 8px calc(6px + env(safe-area-inset-bottom))!important;background:#03101d!important;border-top:1px solid #18364d!important}
+ .mobile-bottom-nav button{min-height:48px;color:#a9bfd0!important;font-size:10px!important}
+ .mobile-bottom-nav button span{font-size:21px!important}
+ .mobile-bottom-nav button.active{color:#08e5d2!important}
+ .mobile-bottom-nav .upload-tab span{display:grid;place-items:center;width:42px;height:30px;border-radius:11px;background:linear-gradient(120deg,#08e5d2,#00a9c0);color:#03101d;font-size:27px!important;font-weight:500}
+}
+
 </style>
 </head>
 <body>
@@ -329,10 +363,11 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 <div id="appScreen" class="hidden">
 <header class="topbar">
   <button class="mobile-menu" type="button" onclick="document.querySelector('#appScreen .layout>aside').classList.toggle('mobile-open')" aria-label="Menu">☰</button>
-  <div class="brand"><div class="play">▶</div><div>TS <b>WORLD</b><small>WATCH • UPLOAD • EARN</small></div></div>
-  <div class="search"><input id="searchInput" placeholder="Search videos, channels, or topics..."><button onclick="searchVideos()">⌕</button></div>
-  <div class="top-actions"><button class="header-logout" type="button" onclick="logout()">Logout</button><button class="header-icon profile-icon" type="button" onclick="showUserPage('channel')" aria-label="My Account">●</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button></div>
+  <div class="brand tsw-wordmark"><div class="play">▶</div><div class="wordmark-text"><span class="ts-mark">TS</span><b>WORLD</b><small>WATCH • UPLOAD • EARN</small></div></div>
+  <div class="search" id="mobileSearch"><input id="searchInput" placeholder="Search videos, channels, or topics..."><button onclick="searchVideos()">⌕</button></div>
+  <div class="top-actions"><button class="header-icon notification-icon" type="button" aria-label="Notifications" title="Notifications">♧</button><button class="header-icon search-toggle" type="button" onclick="toggleMobileSearch()" aria-label="Search" title="Search">⌕</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
 </header>
+<nav class="mobile-top-tabs" aria-label="Explore"><button class="selected" onclick="showUserPage('home');setTopTab(this)">Home</button><button onclick="showUserPage('home');setTopTab(this)">Subscriptions</button><button onclick="alert('Live videos will appear here when available.');setTopTab(this)">Live</button><button onclick="document.querySelector('#appScreen .layout>aside').classList.toggle('mobile-open');setTopTab(this)">More</button></nav>
 <div class="layout">
 <aside><nav class="nav">
 <a class="active" href="#"><span>⌂</span>Home</a><a href="#"><span>🔥</span>Trending</a><a href="#"><span>▶</span>Shorts</a><a href="#"><span>▣</span>Subscriptions</a><hr>
@@ -380,11 +415,10 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 </section><footer>© 2026 TS WORLD • Watch • Upload • Earn</footer>
 </main></div>
 <nav class="mobile-bottom-nav" aria-label="Main navigation">
- <button class="active" onclick="showUserPage('home')"><span>⌂</span>Home</button>
- <button onclick="showUserPage('home')"><span>♨</span>Trending</button>
- <button onclick="alert('Upload is available from the Upload Video option.')"><span>＋</span>Upload</button>
- <button onclick="showUserPage('home')"><span>▣</span>Subscriptions</button>
- <button onclick="showUserPage('channel')"><span>♙</span>My Account</button>
+ <button class="active" onclick="showUserPage('home');setBottomTab(this)"><span>⌂</span>Home</button>
+ <button onclick="showUserPage('home');document.querySelector('.section-title').scrollIntoView({behavior:'smooth'});setBottomTab(this)"><span>▣</span>Shorts</button>
+ <button class="upload-tab" onclick="alert('Video upload will be connected in the next step.')" aria-label="Upload video"><span>＋</span></button>
+ <button onclick="showUserPage('channel');setBottomTab(this)"><span>♙</span>Account</button>
 </nav></div>
 
 <script>
@@ -850,6 +884,11 @@ function filterCategory(category,button){
  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));button.classList.add('active');
  document.querySelectorAll('#videoGrid .video').forEach(card=>card.style.display=(category==='All'||card.dataset.category===category)?'block':'none');
 }
+function toggleMobileSearch(){
+ const box=$('mobileSearch');if(!box)return;box.classList.toggle('search-open');if(box.classList.contains('search-open'))$('searchInput').focus();
+}
+function setTopTab(button){document.querySelectorAll('.mobile-top-tabs button').forEach(x=>x.classList.remove('selected'));button.classList.add('selected');}
+function setBottomTab(button){document.querySelectorAll('.mobile-bottom-nav button').forEach(x=>x.classList.remove('active'));button.classList.add('active');}
 function searchVideos(){
  const q=$('searchInput').value.toLowerCase().trim();
  document.querySelectorAll('#videoGrid .video').forEach(card=>card.style.display=card.innerText.toLowerCase().includes(q)?'block':'none');
