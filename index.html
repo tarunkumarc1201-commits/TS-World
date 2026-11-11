@@ -1067,6 +1067,37 @@ async function loadUserVideos(){
     if(note)note.textContent='Coins could not be added: '+(err.message||'Please try again.');
    }
   };
+  // Android APK: show a native AdMob interstitial before starting a video.
+  // Normal browsers continue playback without an ad because the Android bridge is absent.
+  video.addEventListener('play', function tswAdGate() {
+   if (video.dataset.tswAdPass === '1') {
+    delete video.dataset.tswAdPass;
+    return;
+   }
+   if (!window.TSWorldAds || typeof window.TSWorldAds.showInterstitialBeforeVideo !== 'function') return;
+   video.pause();
+   window.__tswPendingVideo = video;
+   try {
+    window.TSWorldAds.showInterstitialBeforeVideo();
+   } catch (err) {
+    delete window.__tswPendingVideo;
+    video.dataset.tswAdPass = '1';
+    video.play().catch(()=>{});
+   }
+  });
+
+  // Called by MainActivity after the interstitial is dismissed (or unavailable).
+  window.onTSWorldAdClosed = function() {
+   const pending = window.__tswPendingVideo;
+   window.__tswPendingVideo = null;
+   if (!pending) return;
+   pending.dataset.tswAdPass = '1';
+   const playPromise = pending.play();
+   if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(err => console.warn('TS WORLD video resume failed:', err));
+   }
+  };
+
   const expandButton=video.parentElement?.querySelector('.tsw-fullscreen-btn');
   expandButton?.addEventListener('click',async()=>{
    try{
