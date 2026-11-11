@@ -515,13 +515,13 @@ body.tsw-video-open{overflow:hidden!important}
   <button class="mobile-menu" type="button" onclick="document.querySelector('#appScreen .layout>aside').classList.toggle('mobile-open')" aria-label="Menu">☰</button>
   <div class="brand tsw-wordmark"><div class="play">▶</div><div class="wordmark-text"><span class="ts-mark">TS</span><b>WORLD</b><small>WATCH • UPLOAD • EARN</small></div></div>
   <div class="search" id="mobileSearch"><input id="searchInput" placeholder="Search videos, channels, or topics..."><button onclick="searchVideos()">⌕</button></div>
-  <div class="top-actions"><button class="header-icon notification-icon" type="button" aria-label="Notifications" title="Notifications">🔔</button><button class="header-icon search-toggle" type="button" onclick="toggleMobileSearch()" aria-label="Search" title="Search">⌕</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="alert('Video upload will be connected in the next step.')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
+  <div class="top-actions"><button class="header-icon notification-icon" type="button" aria-label="Notifications" title="Notifications">🔔</button><button class="header-icon search-toggle" type="button" onclick="toggleMobileSearch()" aria-label="Search" title="Search">⌕</button><span class="user-pill" id="userLabel"></span><button class="upload" onclick="showUserPage('upload')">＋ Upload</button><button class="login" onclick="logout()">Logout</button></div>
 </header>
 <nav class="mobile-top-tabs" aria-label="Explore"><button class="selected" onclick="showUserPage('home');setTopTab(this)">Home</button><button onclick="showUserPage('home');setTopTab(this)">Subscriptions</button><button onclick="alert('Live videos will appear here when available.');setTopTab(this)">Live</button><button onclick="document.querySelector('#appScreen .layout>aside').classList.toggle('mobile-open');setTopTab(this)">More</button></nav>
 <div class="layout">
 <aside><nav class="nav">
 <a class="active" href="#"><span>⌂</span>Home</a><a href="#"><span>🔥</span>Trending</a><a href="#"><span>▶</span>Shorts</a><a href="#"><span>▣</span>Subscriptions</a><hr>
-<a href="#" onclick="showUserPage('channel');return false"><span>♙</span>My Account</a><a href="#"><span>☁</span>Upload Video</a><a href="#"><span>♡</span>Watch Later</a>
+<a href="#" onclick="showUserPage('channel');return false"><span>♙</span>My Account</a><a href="#" onclick="showUserPage('upload');return false"><span>☁</span>Upload Video</a><a href="#"><span>♡</span>Watch Later</a>
 </nav><div class="earnbox"><div class="coin">🪙</div><h3>Watch & Earn Coins</h3><p>Watch videos, collect coins and request your rewards.</p><button onclick="alert('Wallet and rewards will be activated in the next step.')">Start Earning ›</button></div></aside>
 <main>
 <section class="hero tsw-feature-banner">
@@ -555,6 +555,22 @@ body.tsw-video-open{overflow:hidden!important}
  <div class="withdrawal-card"><h2>Request Withdrawal</h2><label for="withdrawCoins">Coins to withdraw</label><input id="withdrawCoins" type="number" min="1" step="1" placeholder="Enter coins"><div class="meta">Estimated amount: ₹<span id="withdrawAmountPreview">0.00</span></div><label for="withdrawUpi">UPI ID</label><input id="withdrawUpi" type="text" maxlength="120" placeholder="example@upi"><button class="wallet-primary page-wide" id="withdrawRequestBtn" type="button" onclick="submitWithdrawalRequest()">Submit Withdrawal Request</button><div id="withdrawMessage" class="admin-note" role="status"></div></div>
  <div class="withdrawal-card"><h2>My Withdrawal Requests</h2><div id="myWithdrawalList" class="meta">Loading…</div></div>
  </section>
+<section id="userUploadPage" class="user-page hidden">
+ <div class="page-heading"><div><div class="eyebrow">SHARE WITH TS WORLD</div><h1>Upload Your Video</h1><p>Your video will be reviewed by the Admin before it appears publicly.</p></div></div>
+ <div class="withdrawal-card">
+  <form id="userVideoUploadForm" class="video-upload-form">
+   <label for="userVideoTitle">Video title</label><input id="userVideoTitle" type="text" maxlength="160" required placeholder="Enter video title">
+   <label for="userVideoDescription">Description</label><textarea id="userVideoDescription" rows="3" maxlength="2000" placeholder="Tell viewers about your video"></textarea>
+   <label for="userVideoCategory">Category</label><select id="userVideoCategory"><option>Education</option><option>Entertainment</option><option>Technology</option><option>Music</option><option>Sports</option><option>Travel</option><option>Other</option></select>
+   <label for="userVideoFile">Choose video (MP4, MOV, WEBM — max 50 MB)</label><input id="userVideoFile" type="file" accept="video/mp4,video/quicktime,video/webm,video/*" required>
+   <div class="admin-note">Admin approval is required. Reward Coins, publishing, pausing and removal are controlled only by TS WORLD Admin.</div>
+   <div id="userVideoUploadMessage" class="upload-progress" role="status">Select your video to upload.</div>
+   <button class="wallet-primary page-wide" id="userVideoUploadBtn" type="submit">⬆ Submit Video for Review</button>
+  </form>
+ </div>
+ <div class="withdrawal-card"><h2>My Uploaded Videos</h2><div id="myUploadedVideos" class="meta">Loading your uploads…</div></div>
+</section>
+
 <div class="categories"><button class="chip active" onclick="filterCategory('All',this)">▦ All</button><button class="chip" onclick="filterCategory('Education',this)">🎓 Education</button><button class="chip" onclick="filterCategory('Entertainment',this)">🎬 Entertainment</button><button class="chip" onclick="filterCategory('Technology',this)">💻 Technology</button><button class="chip" onclick="filterCategory('Music',this)">♫ Music</button><button class="chip" onclick="filterCategory('Sports',this)">🏆 Sports</button><button class="chip" onclick="filterCategory('Travel',this)">✈ Travel</button></div>
 <div class="section-title"><h2>🔥 Trending Videos</h2><a href="#">See All ›</a></div>
 <section class="videos" id="videoGrid">
@@ -571,7 +587,7 @@ body.tsw-video-open{overflow:hidden!important}
 <nav class="mobile-bottom-nav" aria-label="Main navigation">
  <button class="active" onclick="showUserPage('home');setBottomTab(this)"><span>⌂</span>Home</button>
  <button onclick="showUserPage('home');document.querySelector('.section-title').scrollIntoView({behavior:'smooth'});setBottomTab(this)"><span>▣</span>Shorts</button>
- <button class="upload-tab" onclick="alert('Video upload will be connected in the next step.')" aria-label="Upload video"><span>＋</span></button>
+ <button class="upload-tab" onclick="showUserPage('upload');setBottomTab(this)" aria-label="Upload video"><span>＋</span></button>
  <button onclick="showUserPage('channel');setBottomTab(this)"><span>♙</span>Account</button>
 </nav></div>
 
@@ -872,7 +888,8 @@ async function loadAdminVideos(){
    article.style.cssText='display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;align-items:start';
    const info=document.createElement('div');
    const heading=document.createElement('b');heading.textContent=v.title||v.name||'Untitled video';heading.style.fontSize='16px';
-   const meta=document.createElement('p');meta.className='meta';meta.textContent=(v.category||'')+' • '+(v.created_at?new Date(v.created_at).toLocaleString():'');
+   const meta=document.createElement('p');meta.className='meta';meta.textContent=(v.category||'')+' • '+(v.created_at?new Date(v.created_at).toLocaleString():'')+' • Uploaded by: '+(v.uploaded_by===currentSignedInUser?.id?'Admin':String(v.uploaded_by||'User').slice(0,8));
+   const state=document.createElement('div');state.className='admin-note';state.style.margin='8px 0';state.textContent='Status: '+String(v.status||'pending').toUpperCase();
    const desc=document.createElement('p');desc.textContent=v.description||'';
    const label=document.createElement('label');label.textContent='🪙 Reward Coins (editable)';label.style.cssText='display:block;margin:12px 0 6px;font-weight:700';
    const field=document.createElement('input');field.type='number';field.min='0';field.max='1000000';field.step='1';field.value=String(v.reward_coins??0);
@@ -913,7 +930,13 @@ async function loadAdminVideos(){
      await loadAdminVideos();
      await loadAdminOverview();
    });
-   info.append(heading,meta,desc,label,field,preview,save,status,remove);
+   const moderation=document.createElement('div');moderation.style.cssText='display:flex;flex-wrap:wrap;gap:8px;margin:10px 0';
+   const addModerationButton=(caption,nextStatus,bg)=>{const b=document.createElement('button');b.type='button';b.className='admin-action';b.textContent=caption;b.style.cssText='padding:9px 12px;background:'+bg;b.addEventListener('click',()=>moderateVideo(v.id,nextStatus,status,state));moderation.append(b);};
+   if(v.status!=='published')addModerationButton('✓ Approve & Publish','published','#174b35');
+   if(v.status==='published')addModerationButton('Ⅱ Stop / Pause','paused','#65430f');
+   if(v.status==='paused')addModerationButton('▶ Resume','published','#174b35');
+   if(v.status!=='rejected')addModerationButton('✕ Reject','rejected','#64202b');
+   info.append(heading,meta,state,desc,label,field,preview,save,moderation,status,remove);
    let url=v.video_url||v.url||v.public_url||'';
    if(!url&&v.storage_path)url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';
    const media=document.createElement('div');
@@ -921,6 +944,20 @@ async function loadAdminVideos(){
    else media.textContent='Video URL missing';
    article.append(info,media);box.append(article);
  }
+}
+
+async function moderateVideo(videoId,nextStatus,statusNode,stateNode){
+ if(!['published','paused','rejected'].includes(nextStatus))return;
+ if(!currentSignedInUser)return;
+ const labels={published:'approve and publish',paused:'pause',rejected:'reject'};
+ if(!confirm('Are you sure you want to '+labels[nextStatus]+' this video?'))return;
+ statusNode.textContent='Updating video status…';
+ const {data,error}=await supabaseClient.from('videos').update({status:nextStatus}).eq('id',videoId).select('id,status').maybeSingle();
+ if(error){statusNode.textContent='Could not update status: '+error.message+' (Check admin UPDATE policy on videos.)';return;}
+ if(!data){statusNode.textContent='No video updated. Check admin permission.';return;}
+ stateNode.textContent='Status: '+String(data.status).toUpperCase();
+ statusNode.textContent='Video status updated.';
+ await loadAdminVideos();await loadAdminOverview();
 }
 
 $('adminVideoUploadForm').addEventListener('submit',async e=>{
@@ -956,6 +993,39 @@ $('adminVideoUploadForm').addEventListener('submit',async e=>{
  }catch(err){setVideoMessage(err.message||'Upload failed. Please try again.',true);}
  finally{btn.disabled=false;btn.textContent='⬆ Upload Video';}
 });
+
+$('userVideoUploadForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const message=$('userVideoUploadMessage'),btn=$('userVideoUploadBtn');
+ const file=$('userVideoFile').files?.[0],title=$('userVideoTitle').value.trim();
+ const description=$('userVideoDescription').value.trim(),category=$('userVideoCategory').value;
+ if(!currentSignedInUser){message.textContent='Please login again to upload.';return;}
+ if(!file){message.textContent='Please choose a video file.';return;}
+ if(!file.type.startsWith('video/')){message.textContent='Choose a valid video file (MP4, MOV or WEBM).';return;}
+ if(file.size>MAX_VIDEO_BYTES){message.textContent='Video is larger than 50 MB. Please choose a smaller file.';return;}
+ btn.disabled=true;btn.textContent='Uploading…';message.textContent='Uploading your video…';
+ let storedPath='';
+ try{
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const path=currentSignedInUser.id+'/'+Date.now()+'_'+safeName;
+  const {data:stored,error:storageError}=await supabaseClient.storage.from(VIDEO_BUCKET).upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type});
+  if(storageError)throw new Error('Storage upload failed: '+storageError.message+' (Check the videos bucket upload policy.)');
+  storedPath=stored.path;
+  const {data:publicData}=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(stored.path);
+  const {error:dbError}=await supabaseClient.from('videos').insert({title,description,category,video_url:publicData?.publicUrl||'',storage_path:stored.path,status:'pending',uploaded_by:currentSignedInUser.id,reward_coins:0});
+  if(dbError)throw new Error('Video file uploaded but details could not be saved: '+dbError.message+' (Check videos INSERT policy.)');
+  $('userVideoUploadForm').reset();message.textContent='Upload successful! Your video is Pending Admin Review. It will appear on TS WORLD after approval.';
+  await loadMyUploadedVideos();
+ }catch(err){message.textContent=err.message||'Upload failed.';}
+ finally{btn.disabled=false;btn.textContent='⬆ Submit Video for Review';}
+});
+async function loadMyUploadedVideos(){
+ const box=$('myUploadedVideos');if(!box||!currentSignedInUser)return;
+ box.textContent='Loading your uploads…';
+ const {data,error}=await supabaseClient.from('videos').select('id,title,status,created_at').eq('uploaded_by',currentSignedInUser.id).order('created_at',{ascending:false}).limit(50);
+ if(error){box.textContent='Could not load your videos: '+error.message;return;}
+ box.innerHTML=data?.length?data.map(v=>'<div class="video-row"><b>'+escapeHtml(v.title||'Untitled video')+'</b><div>Status: '+escapeHtml(String(v.status||'pending').toUpperCase())+'</div><small>'+escapeHtml(v.created_at?new Date(v.created_at).toLocaleString():'')+'</small></div>').join(''):'You have not uploaded any videos yet.';
+}
 
 async function loadUserVideos(){
  const grid=$('videoGrid'); if(!grid)return;
@@ -1005,12 +1075,14 @@ async function loadUserVideos(){
 }
 function showUserPage(page){
  const homeNodes=[document.querySelector('#appScreen .hero'),document.querySelector('#appScreen .categories'),document.querySelector('#appScreen .section-title'),$('videoGrid')];
- const channel=$('userChannelPage'),history=$('userHistoryPage'),wallet=$('userWalletPage'),withdraw=$('userWithdrawalPage');
+ const channel=$('userChannelPage'),history=$('userHistoryPage'),wallet=$('userWalletPage'),withdraw=$('userWithdrawalPage'),upload=$('userUploadPage');
  homeNodes.forEach(node=>{if(node)node.classList.toggle('hidden',page!=='home');});
  if(channel)channel.classList.toggle('hidden',page!=='channel');
  if(history)history.classList.toggle('hidden',page!=='history');
  if(wallet)wallet.classList.toggle('hidden',page!=='wallet');
  if(withdraw)withdraw.classList.toggle('hidden',page!=='withdrawal');
+ if(upload)upload.classList.toggle('hidden',page!=='upload');
+ if(page==='upload')loadMyUploadedVideos();
  if(page==='channel'||page==='history'||page==='wallet'||page==='withdrawal')loadUserWallet();
  window.scrollTo({top:0,behavior:'smooth'});
 }
