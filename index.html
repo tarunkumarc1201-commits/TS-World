@@ -436,7 +436,7 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 .real-video-player.tsw-video-expanded{position:fixed!important;inset:0!important;z-index:99999!important;width:100vw!important;height:100dvh!important;max-width:100vw!important;max-height:100dvh!important;aspect-ratio:auto!important;object-fit:contain!important;background:#000!important;border-radius:0!important}
 body.tsw-video-open{overflow:hidden!important}
 @media(max-width:760px){.tsw-player-wrap{width:100%;aspect-ratio:16/9}.tsw-player-wrap .real-video-player{width:100%!important;height:100%!important;aspect-ratio:auto!important;object-fit:contain!important}.tsw-fullscreen-btn{width:34px;height:34px;font-size:24px}}
-</style>
+\n/* Native mobile file picker: keep the actual input visible and directly tappable */\n#userUploadPage #userVideoFile{display:block!important;position:static!important;opacity:1!important;visibility:visible!important;width:100%!important;height:auto!important;min-height:54px!important;clip:auto!important;clip-path:none!important;overflow:visible!important;pointer-events:auto!important;touch-action:manipulation!important}\n#userUploadPage #userVideoFile::file-selector-button{padding:10px 14px;margin-right:12px;border:0;border-radius:9px;background:linear-gradient(100deg,#08e5d2,#00a9c0);color:#00232a;font-weight:800}\n</style>
 </head>
 <body>
 <section id="authScreen" class="auth-wrap">
@@ -563,9 +563,8 @@ body.tsw-video-open{overflow:hidden!important}
    <label for="userVideoDescription">Description</label><textarea id="userVideoDescription" rows="3" maxlength="2000" placeholder="Tell viewers about your video"></textarea>
    <label for="userVideoCategory">Category</label><select id="userVideoCategory"><option>Education</option><option>Entertainment</option><option>Technology</option><option>Music</option><option>Sports</option><option>Travel</option><option>Other</option></select>
    <label for="userVideoFile">Select video from your phone</label>
-   <input id="userVideoFile" type="file" accept="video/*" required style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap" aria-label="Choose a video from phone gallery">
-   <button class="wallet-secondary page-wide" type="button" id="chooseUserVideoBtn" onclick="document.getElementById('userVideoFile').click()">📁 Open Phone Gallery / Videos</button>
-   <div id="userVideoFileName" class="admin-note" role="status">No video selected</div>
+   <input id="userVideoFile" type="file" accept="video/*,.mp4,.mov,.webm,.m4v" required aria-label="Choose a video from phone gallery" style="display:block;position:static;width:100%;height:auto;min-height:54px;opacity:1;clip:auto;overflow:visible;white-space:normal;padding:14px;background:#102943;color:#fff;border:2px solid #08e5d2;border-radius:12px;font-size:14px;cursor:pointer">
+   <div id="userVideoFileName" class="admin-note" role="status">Tap “Choose file” to open your phone's video picker.</div>
    <div class="admin-note">Choose a video from Gallery or Videos on your phone. Admin approval is required before it appears publicly. Reward Coins and publishing are controlled only by TS WORLD Admin.</div>
    <div id="userVideoUploadMessage" class="upload-progress" role="status">Select your video to upload.</div>
    <button class="wallet-primary page-wide" id="userVideoUploadBtn" type="submit">⬆ Submit Video for Review</button>
