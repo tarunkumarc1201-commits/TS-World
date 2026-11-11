@@ -562,8 +562,11 @@ body.tsw-video-open{overflow:hidden!important}
    <label for="userVideoTitle">Video title</label><input id="userVideoTitle" type="text" maxlength="160" required placeholder="Enter video title">
    <label for="userVideoDescription">Description</label><textarea id="userVideoDescription" rows="3" maxlength="2000" placeholder="Tell viewers about your video"></textarea>
    <label for="userVideoCategory">Category</label><select id="userVideoCategory"><option>Education</option><option>Entertainment</option><option>Technology</option><option>Music</option><option>Sports</option><option>Travel</option><option>Other</option></select>
-   <label for="userVideoFile">Choose video (MP4, MOV, WEBM — max 50 MB)</label><input id="userVideoFile" type="file" accept="video/mp4,video/quicktime,video/webm,video/*" required>
-   <div class="admin-note">Admin approval is required. Reward Coins, publishing, pausing and removal are controlled only by TS WORLD Admin.</div>
+   <label for="userVideoFile">Select video from your phone</label>
+   <input id="userVideoFile" type="file" accept="video/*" required style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap" aria-label="Choose a video from phone gallery">
+   <button class="wallet-secondary page-wide" type="button" id="chooseUserVideoBtn" onclick="document.getElementById('userVideoFile').click()">📁 Open Phone Gallery / Videos</button>
+   <div id="userVideoFileName" class="admin-note" role="status">No video selected</div>
+   <div class="admin-note">Choose a video from Gallery or Videos on your phone. Admin approval is required before it appears publicly. Reward Coins and publishing are controlled only by TS WORLD Admin.</div>
    <div id="userVideoUploadMessage" class="upload-progress" role="status">Select your video to upload.</div>
    <button class="wallet-primary page-wide" id="userVideoUploadBtn" type="submit">⬆ Submit Video for Review</button>
   </form>
@@ -994,6 +997,10 @@ $('adminVideoUploadForm').addEventListener('submit',async e=>{
  finally{btn.disabled=false;btn.textContent='⬆ Upload Video';}
 });
 
+$('userVideoFile').addEventListener('change',()=>{
+ const file=$('userVideoFile').files?.[0];
+ $('userVideoFileName').textContent=file?'Selected: '+file.name+' ('+(file.size/1024/1024).toFixed(1)+' MB)':'No video selected';
+});
 $('userVideoUploadForm').addEventListener('submit',async e=>{
  e.preventDefault();
  const message=$('userVideoUploadMessage'),btn=$('userVideoUploadBtn');
