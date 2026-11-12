@@ -452,6 +452,16 @@ body.tsw-video-open{overflow:hidden!important}
 body.tsw-watch-open{overflow:hidden}
 @media(max-width:760px){.tsw-watch-stage{aspect-ratio:16/9}.tsw-watch-info{padding:14px}.tsw-watch-info h2{font-size:17px}}
 
+
+/* FINAL MOBILE VIDEO FEED FIX: one video per row, YouTube-style vertical list */
+@media (max-width:760px){
+ #appScreen .videos, #appScreen #videoGrid{display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;grid-template-columns:1fr!important;gap:18px!important;width:100%!important;padding:0 12px!important;box-sizing:border-box!important;}
+ #appScreen .video, #appScreen #videoGrid .real-video-card{display:block!important;flex:0 0 auto!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0!important;}
+ #appScreen .video .thumb, #appScreen .real-video-card .tsw-card-thumb, #appScreen .real-video-player, #appScreen .real-video-missing{display:grid!important;width:100%!important;max-width:100%!important;aspect-ratio:16/9!important;height:auto!important;border-radius:12px!important;}
+ #appScreen .video h3, #appScreen .real-video-card h3{font-size:14px!important;line-height:1.35!important;margin:7px 2px 4px!important;-webkit-line-clamp:2!important;}
+ #appScreen .video .meta, #appScreen .real-video-card .meta{font-size:11px!important;line-height:1.4!important;margin:0 2px!important;}
+ #appScreen .video-reward-note{font-size:11px!important;margin:6px 2px!important;}
+}
 </style>
 </head>
 <body>
