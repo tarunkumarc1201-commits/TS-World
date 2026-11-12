@@ -436,7 +436,23 @@ body:has(#appScreen:not(.hidden)){background:#f7f6fc!important;color:var(--ui-in
 .real-video-player.tsw-video-expanded{position:fixed!important;inset:0!important;z-index:99999!important;width:100vw!important;height:100dvh!important;max-width:100vw!important;max-height:100dvh!important;aspect-ratio:auto!important;object-fit:contain!important;background:#000!important;border-radius:0!important}
 body.tsw-video-open{overflow:hidden!important}
 @media(max-width:760px){.tsw-player-wrap{width:100%;aspect-ratio:16/9}.tsw-player-wrap .real-video-player{width:100%!important;height:100%!important;aspect-ratio:auto!important;object-fit:contain!important}.tsw-fullscreen-btn{width:34px;height:34px;font-size:24px}}
-\n/* Native mobile file picker: keep the actual input visible and directly tappable */\n#userUploadPage #userVideoFile{display:block!important;position:static!important;opacity:1!important;visibility:visible!important;width:100%!important;height:auto!important;min-height:54px!important;clip:auto!important;clip-path:none!important;overflow:visible!important;pointer-events:auto!important;touch-action:manipulation!important}\n#userUploadPage #userVideoFile::file-selector-button{padding:10px 14px;margin-right:12px;border:0;border-radius:9px;background:linear-gradient(100deg,#08e5d2,#00a9c0);color:#00232a;font-weight:800}\n</style>
+\n/* Native mobile file picker: keep the actual input visible and directly tappable */\n#userUploadPage #userVideoFile{display:block!important;position:static!important;opacity:1!important;visibility:visible!important;width:100%!important;height:auto!important;min-height:54px!important;clip:auto!important;clip-path:none!important;overflow:visible!important;pointer-events:auto!important;touch-action:manipulation!important}\n#userUploadPage #userVideoFile::file-selector-button{padding:10px 14px;margin-right:12px;border:0;border-radius:9px;background:linear-gradient(100deg,#08e5d2,#00a9c0);color:#00232a;font-weight:800}\n
+/* TS WORLD dedicated YouTube-style watch screen */
+#tswWatchModal{display:none;position:fixed;inset:0;z-index:100000;background:#070812;color:#fff;overflow:auto}
+#tswWatchModal.open{display:block}
+.tsw-watch-header{height:58px;display:flex;align-items:center;gap:16px;padding:0 14px;border-bottom:1px solid #343956;background:#090b17;position:sticky;top:0;z-index:2}
+#tswWatchClose{width:40px;height:40px;border:0;border-radius:50%;background:#252940;color:white;font-size:21px;cursor:pointer}
+.tsw-watch-header b{font-size:20px;letter-spacing:.5px}.tsw-watch-header span{margin-left:auto;color:#a6abc5;font-size:13px}
+.tsw-watch-stage{width:100%;max-width:1100px;margin:0 auto;background:#000;aspect-ratio:16/9;display:grid;place-items:center}
+#tswWatchVideo{width:100%;height:100%;max-height:72vh;object-fit:contain;background:#000}
+.tsw-watch-info{max-width:1100px;margin:0 auto;padding:16px}.tsw-watch-info h2{font-size:20px;margin:0 0 8px}.tsw-watch-info p{color:#c5c8dc;margin:7px 0}.tsw-watch-actions{display:flex;gap:10px;margin-top:16px}
+#tswWatchNext{border:0;border-radius:22px;padding:11px 20px;background:linear-gradient(90deg,#8500ff,#e000d2);color:#fff;font-weight:800;cursor:pointer}
+.tsw-card-thumb{aspect-ratio:16/9;display:grid;place-content:center;text-align:center;background:linear-gradient(135deg,#172a67,#8c19b7,#e04c9a);font-size:44px;color:white;border-radius:12px;font-weight:900}
+.tsw-card-thumb small{display:block;font-size:11px;letter-spacing:2px}
+body.tsw-watch-open{overflow:hidden}
+@media(max-width:760px){.tsw-watch-stage{aspect-ratio:16/9}.tsw-watch-info{padding:14px}.tsw-watch-info h2{font-size:17px}}
+
+</style>
 </head>
 <body>
 <section id="authScreen" class="auth-wrap">
@@ -1033,83 +1049,54 @@ async function loadMyUploadedVideos(){
  box.innerHTML=data?.length?data.map(v=>'<div class="video-row"><b>'+escapeHtml(v.title||'Untitled video')+'</b><div>Status: '+escapeHtml(String(v.status||'pending').toUpperCase())+'</div><small>'+escapeHtml(v.created_at?new Date(v.created_at).toLocaleString():'')+'</small></div>').join(''):'You have not uploaded any videos yet.';
 }
 
+let tswVideoItems=[];
+let tswCurrentVideoIndex=-1;
+function ensureTSWPlayer(){
+ let modal=document.getElementById('tswWatchModal');
+ if(modal)return modal;
+ modal=document.createElement('div');modal.id='tswWatchModal';
+ modal.innerHTML='<div class="tsw-watch-header"><button type="button" id="tswWatchClose" aria-label="Close video">✕</button><b>TS WORLD</b><span id="tswWatchPosition"></span></div><div class="tsw-watch-stage"><video id="tswWatchVideo" controls playsinline webkit-playsinline></video></div><div class="tsw-watch-info"><h2 id="tswWatchTitle"></h2><p id="tswWatchMeta"></p><p id="tswWatchReward"></p><div class="tsw-watch-actions"><button type="button" id="tswWatchNext">Next video ⏭</button></div></div>';
+ document.body.appendChild(modal);
+ document.getElementById('tswWatchClose').addEventListener('click',closeTSWPlayer);
+ document.getElementById('tswWatchNext').addEventListener('click',()=>playTSWVideo(tswCurrentVideoIndex+1));
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeTSWPlayer();});
+ return modal;
+}
+function closeTSWPlayer(){
+ const modal=document.getElementById('tswWatchModal');const player=document.getElementById('tswWatchVideo');
+ if(player){player.pause();player.removeAttribute('src');player.load();}
+ if(modal)modal.classList.remove('open');document.body.classList.remove('tsw-watch-open');tswCurrentVideoIndex=-1;
+}
+function playTSWVideo(index){
+ if(!tswVideoItems.length)return;
+ if(index>=tswVideoItems.length)index=0;if(index<0)index=tswVideoItems.length-1;
+ tswCurrentVideoIndex=index;const v=tswVideoItems[index];const modal=ensureTSWPlayer();const player=document.getElementById('tswWatchVideo');
+ player.pause();player.src=v.url;player.load();
+ document.getElementById('tswWatchTitle').textContent=v.title;
+ document.getElementById('tswWatchMeta').textContent='TS WORLD • '+v.category;
+ document.getElementById('tswWatchPosition').textContent=(index+1)+' / '+tswVideoItems.length;
+ document.getElementById('tswWatchReward').textContent='🪙 90% Watch Reward: '+v.coins+' Coins (₹'+(v.coins/100).toFixed(2)+')';
+ modal.classList.add('open');document.body.classList.add('tsw-watch-open');
+ let submitted=false;
+ const claim=async()=>{
+  if(submitted||!Number.isFinite(player.duration)||player.duration<=0||player.currentTime/player.duration<0.9)return;
+  submitted=true;const note=document.getElementById('tswWatchReward');note.textContent='90% watched. Crediting Coins…';
+  try{const {data,error}=await supabaseClient.rpc('tsw_claim_video_reward',{p_video_id:v.id});if(error)throw error;const n=Number(data?.coins_awarded)||0;note.textContent=data?.already_claimed?'Already rewarded for this video.':n>0?'🪙 '+n+' Coins added to your Wallet!':'This video has 0 Reward Coins.';await loadUserWallet();}
+  catch(err){submitted=false;note.textContent='Coins could not be added: '+(err.message||'Please try again.');}
+ };
+ player.ontimeupdate=claim;player.onended=()=>{claim();playTSWVideo(tswCurrentVideoIndex+1);};
+ player.play().catch(()=>{});
+}
 async function loadUserVideos(){
- const grid=$('videoGrid'); if(!grid)return;
- grid.innerHTML='<div class="admin-note">Loading videos…</div>';
+ const grid=$('videoGrid');if(!grid)return;grid.innerHTML='<div class="admin-note">Loading videos…</div>';
  const {data,error}=await supabaseClient.from('videos').select('id,title,description,category,video_url,storage_path,status,created_at,reward_coins').eq('status','published').order('created_at',{ascending:false}).limit(100);
  if(error){grid.innerHTML='<div class="admin-note">Videos could not be loaded: '+escapeHtml(error.message)+'</div>';return;}
  if(!data?.length){grid.innerHTML='<div class="admin-note">No published videos available yet.</div>';return;}
- grid.innerHTML=data.map(v=>{
-  let url=v.video_url||'';if(!url&&v.storage_path)url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';
-  const coins=Math.max(0,Number(v.reward_coins)||0);
-  return '<article class="video real-video-card" data-category="'+escapeHtml(v.category||'General')+'">'+
-   (url?'<div class="tsw-player-wrap"><video class="real-video-player" controls preload="metadata" playsinline webkit-playsinline data-reward-video="'+escapeHtml(v.id)+'" src="'+escapeHtml(url)+'"></video><button class="tsw-fullscreen-btn" type="button" aria-label="Open large video" title="Open large video">⛶</button></div>':'<div class="real-video-missing">Video file URL is missing.</div>')+
-   '<h3>'+escapeHtml(v.title||'Untitled video')+'</h3><p class="meta"><span class="channel">TS WORLD</span><br>'+escapeHtml(v.category||'General')+(v.created_at?' • '+escapeHtml(new Date(v.created_at).toLocaleDateString()):'')+'</p>'+
-   '<div class="video-reward-note" style="margin:8px 12px;color:#ffd34d;font-weight:700">🪙 Watch 90% and earn '+coins+' Coins (₹'+(coins/100).toFixed(2)+')</div>'+
-   (v.description?'<p class="real-video-description">'+escapeHtml(v.description)+'</p>':'')+'</article>';
- }).join('');
- grid.querySelectorAll('video[data-reward-video]').forEach(video=>{
-  let submitted=false;
-  const claimReward=async()=>{
-   if(submitted||!Number.isFinite(video.duration)||video.duration<=0||video.currentTime/video.duration<0.9)return;
-   submitted=true;
-   const card=video.closest('.real-video-card');
-   const note=card?.querySelector('.video-reward-note');
-   if(note)note.textContent='90% watched. Crediting Coins…';
-   try{
-    const {data,error}=await supabaseClient.rpc('tsw_claim_video_reward',{p_video_id:video.dataset.rewardVideo});
-    if(error)throw error;
-    const awarded=Number(data?.coins_awarded)||0;
-    if(note)note.textContent=data?.already_claimed?'You have already received Coins for this video.':awarded>0?'🪙 '+awarded+' Coins added to your Wallet!':'This video has 0 Reward Coins.';
-    await loadUserWallet();
-   }catch(err){
-    submitted=false;
-    if(note)note.textContent='Coins could not be added: '+(err.message||'Please try again.');
-   }
-  };
-  // Android APK: show a native AdMob interstitial before starting a video.
-  // Normal browsers continue playback without an ad because the Android bridge is absent.
-  video.addEventListener('play', function tswAdGate() {
-   if (video.dataset.tswAdPass === '1') {
-    delete video.dataset.tswAdPass;
-    return;
-   }
-   if (!window.TSWorldAds || typeof window.TSWorldAds.showInterstitialBeforeVideo !== 'function') return;
-   video.pause();
-   window.__tswPendingVideo = video;
-   try {
-    window.TSWorldAds.showInterstitialBeforeVideo();
-   } catch (err) {
-    delete window.__tswPendingVideo;
-    video.dataset.tswAdPass = '1';
-    video.play().catch(()=>{});
-   }
-  });
-
-  // Called by MainActivity after the interstitial is dismissed (or unavailable).
-  window.onTSWorldAdClosed = function() {
-   const pending = window.__tswPendingVideo;
-   window.__tswPendingVideo = null;
-   if (!pending) return;
-   pending.dataset.tswAdPass = '1';
-   const playPromise = pending.play();
-   if (playPromise && typeof playPromise.catch === 'function') {
-    playPromise.catch(err => console.warn('TS WORLD video resume failed:', err));
-   }
-  };
-
-  const expandButton=video.parentElement?.querySelector('.tsw-fullscreen-btn');
-  expandButton?.addEventListener('click',async()=>{
-   try{
-    if(video.requestFullscreen){await video.requestFullscreen();}
-    else if(video.webkitEnterFullscreen){video.webkitEnterFullscreen();}
-    else {video.classList.toggle('tsw-video-expanded');document.body.classList.toggle('tsw-video-open',video.classList.contains('tsw-video-expanded'));}
-   }catch(err){video.classList.add('tsw-video-expanded');document.body.classList.add('tsw-video-open');}
-  });
-  video.addEventListener('timeupdate',claimReward);
-  video.addEventListener('ended',claimReward);
- });
+ tswVideoItems=data.map(v=>{let url=v.video_url||'';if(!url&&v.storage_path)url=supabaseClient.storage.from(VIDEO_BUCKET).getPublicUrl(v.storage_path).data?.publicUrl||'';return {id:v.id,url,title:v.title||'Untitled video',category:v.category||'General',description:v.description||'',date:v.created_at?new Date(v.created_at).toLocaleDateString():'',coins:Math.max(0,Number(v.reward_coins)||0)};}).filter(v=>v.url);
+ grid.innerHTML=tswVideoItems.map((v,i)=>'<article class="video real-video-card" data-category="'+escapeHtml(v.category)+'" data-tsw-index="'+i+'"><div class="tsw-card-thumb">▶<small>PLAY VIDEO</small></div><h3>'+escapeHtml(v.title)+'</h3><p class="meta"><span class="channel">TS WORLD</span><br>'+escapeHtml(v.category)+(v.date?' • '+escapeHtml(v.date):'')+'</p><div class="video-reward-note" style="margin:8px 12px;color:#ffd34d;font-weight:700">🪙 Watch 90% and earn '+v.coins+' Coins (₹'+(v.coins/100).toFixed(2)+')</div>'+(v.description?'<p class="real-video-description">'+escapeHtml(v.description)+'</p>':'')+'</article>').join('');
+ grid.querySelectorAll('[data-tsw-index]').forEach(card=>card.addEventListener('click',()=>playTSWVideo(Number(card.dataset.tswIndex))));
 }
+
 function showUserPage(page){
  const homeNodes=[document.querySelector('#appScreen .hero'),document.querySelector('#appScreen .categories'),document.querySelector('#appScreen .section-title'),$('videoGrid')];
  const channel=$('userChannelPage'),history=$('userHistoryPage'),wallet=$('userWalletPage'),withdraw=$('userWithdrawalPage'),upload=$('userUploadPage');
