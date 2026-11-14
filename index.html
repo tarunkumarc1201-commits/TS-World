@@ -462,6 +462,50 @@ body.tsw-watch-open{overflow:hidden}
  #appScreen .video .meta, #appScreen .real-video-card .meta{font-size:11px!important;line-height:1.4!important;margin:0 2px!important;}
  #appScreen .video-reward-note{font-size:11px!important;margin:6px 2px!important;}
 }
+
+/* v3 hard override: enforce one full-width video card per row on phones */
+@media screen and (max-width:760px){
+  #appScreen #videoGrid{
+    display:flex!important;
+    flex-direction:column!important;
+    flex-wrap:nowrap!important;
+    align-items:stretch!important;
+    width:100%!important;
+    gap:18px!important;
+    padding:0 12px 12px!important;
+  }
+  #appScreen #videoGrid > .real-video-card{
+    display:block!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+  }
+}
+/* Dedicated player: give the video element a definite visible box */
+#tswWatchModal .tsw-watch-stage{
+  display:block!important;
+  width:100%!important;
+  aspect-ratio:16/9!important;
+  height:auto!important;
+  min-height:180px;
+  background:#000!important;
+}
+#tswWatchModal #tswWatchVideo{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:180px!important;
+  max-height:72vh!important;
+  object-fit:contain!important;
+  background:#000!important;
+}
+@media(max-width:760px){
+  #tswWatchModal .tsw-watch-stage{min-height:0;height:auto!important}
+  #tswWatchModal #tswWatchVideo{min-height:0;height:auto!important;aspect-ratio:16/9!important}
+}
+
 </style>
 </head>
 <body>
